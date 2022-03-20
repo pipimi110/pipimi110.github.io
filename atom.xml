@@ -6,7 +6,7 @@
   <link href="/atom.xml" rel="self"/>
   
   <link href="https://pipimi110.github.io/"/>
-  <updated>2022-03-20T15:05:58.172Z</updated>
+  <updated>2022-03-20T16:33:09.524Z</updated>
   <id>https://pipimi110.github.io/</id>
   
   <author>
@@ -17,11 +17,11 @@
   <generator uri="http://hexo.io/">Hexo</generator>
   
   <entry>
-    <title></title>
+    <title>dubbo反序列化漏洞分析</title>
     <link href="https://pipimi110.github.io/2022/03/21/dubbo%E6%BC%8F%E6%B4%9E/"/>
     <id>https://pipimi110.github.io/2022/03/21/dubbo漏洞/</id>
     <published>2022-03-20T16:15:44.097Z</published>
-    <updated>2022-03-20T15:05:58.172Z</updated>
+    <updated>2022-03-20T16:33:09.524Z</updated>
     
     <summary type="html">
     
@@ -29,12 +29,21 @@
       
         
         
-          &lt;h1 id=&quot;dubbo漏洞&quot;&gt;&lt;a href=&quot;#dubbo漏洞&quot; class=&quot;headerlink&quot;
+          &lt;blockquote&gt;
+&lt;p&gt;除了官方推荐的默认Dubbo协议外，Dubbo还支持HTTP，RMI等协议。&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;p&gt;provider相当于服务器，是我们的攻击目标&lt;/p&gt;
+&lt;p&gt;consumer相当于客户机，不是攻击目标&lt;/p&gt;
+&lt;h2
         
       
     
     </summary>
     
+      <category term="代码审计" scheme="https://pipimi110.github.io/categories/%E4%BB%A3%E7%A0%81%E5%AE%A1%E8%AE%A1/"/>
+    
+    
+      <category term="java" scheme="https://pipimi110.github.io/tags/java/"/>
     
   </entry>
   
@@ -68,7 +77,7 @@
     <link href="https://pipimi110.github.io/2021/04/19/ayaneSama/"/>
     <id>https://pipimi110.github.io/2021/04/19/ayaneSama/</id>
     <published>2021-04-19T09:11:51.000Z</published>
-    <updated>2021-09-14T14:23:05.461Z</updated>
+    <updated>2022-03-20T16:27:16.903Z</updated>
     
     <summary type="html">
     
