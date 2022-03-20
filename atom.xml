@@ -6,7 +6,7 @@
   <link href="/atom.xml" rel="self"/>
   
   <link href="https://pipimi110.github.io/"/>
-  <updated>2021-09-14T14:21:12.669Z</updated>
+  <updated>2022-03-20T15:05:58.172Z</updated>
   <id>https://pipimi110.github.io/</id>
   
   <author>
@@ -15,6 +15,28 @@
   </author>
   
   <generator uri="http://hexo.io/">Hexo</generator>
+  
+  <entry>
+    <title></title>
+    <link href="https://pipimi110.github.io/2022/03/21/dubbo%E6%BC%8F%E6%B4%9E/"/>
+    <id>https://pipimi110.github.io/2022/03/21/dubbo漏洞/</id>
+    <published>2022-03-20T16:15:44.097Z</published>
+    <updated>2022-03-20T15:05:58.172Z</updated>
+    
+    <summary type="html">
+    
+      
+      
+        
+        
+          &lt;h1 id=&quot;dubbo漏洞&quot;&gt;&lt;a href=&quot;#dubbo漏洞&quot; class=&quot;headerlink&quot;
+        
+      
+    
+    </summary>
+    
+    
+  </entry>
   
   <entry>
     <title>RCTF2021_misc_ezshell_出题人wp</title>
