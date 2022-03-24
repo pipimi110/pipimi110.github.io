@@ -6,7 +6,7 @@
   <link href="/atom.xml" rel="self"/>
   
   <link href="https://pipimi110.github.io/"/>
-  <updated>2022-03-20T16:33:09.524Z</updated>
+  <updated>2022-03-24T15:05:07.565Z</updated>
   <id>https://pipimi110.github.io/</id>
   
   <author>
@@ -15,6 +15,32 @@
   </author>
   
   <generator uri="http://hexo.io/">Hexo</generator>
+  
+  <entry>
+    <title>cms漏洞3</title>
+    <link href="https://pipimi110.github.io/2022/03/24/cms%E6%BC%8F%E6%B4%9E3/"/>
+    <id>https://pipimi110.github.io/2022/03/24/cms漏洞3/</id>
+    <published>2022-03-24T15:05:26.291Z</published>
+    <updated>2022-03-24T15:05:07.565Z</updated>
+    
+    <summary type="html">
+    
+      
+      
+        
+        
+          &lt;h1 id=&quot;cms漏洞3&quot;&gt;&lt;a href=&quot;#cms漏洞3&quot; class=&quot;headerlink&quot; title=&quot;cms漏洞3&quot;&gt;&lt;/a&gt;cms漏洞3&lt;/h1&gt;&lt;h1 id=&quot;pbootcms&quot;&gt;&lt;a href=&quot;#pbootcms&quot; class=&quot;headerlink&quot;
+        
+      
+    
+    </summary>
+    
+      <category term="代码审计" scheme="https://pipimi110.github.io/categories/%E4%BB%A3%E7%A0%81%E5%AE%A1%E8%AE%A1/"/>
+    
+    
+      <category term="php" scheme="https://pipimi110.github.io/tags/php/"/>
+    
+  </entry>
   
   <entry>
     <title>dubbo反序列化漏洞分析</title>
