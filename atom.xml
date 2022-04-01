@@ -6,7 +6,7 @@
   <link href="/atom.xml" rel="self"/>
   
   <link href="https://pipimi110.github.io/"/>
-  <updated>2022-03-24T15:05:07.565Z</updated>
+  <updated>2022-04-01T10:40:14.331Z</updated>
   <id>https://pipimi110.github.io/</id>
   
   <author>
@@ -17,11 +17,37 @@
   <generator uri="http://hexo.io/">Hexo</generator>
   
   <entry>
+    <title>Hessian2反序列化</title>
+    <link href="https://pipimi110.github.io/2022/04/01/Hessian2/"/>
+    <id>https://pipimi110.github.io/2022/04/01/Hessian2/</id>
+    <published>2022-04-01T10:39:39.999Z</published>
+    <updated>2022-04-01T10:40:14.331Z</updated>
+    
+    <summary type="html">
+    
+      
+      
+        
+        
+          &lt;h2 id=&quot;Hessian2&quot;&gt;&lt;a href=&quot;#Hessian2&quot; class=&quot;headerlink&quot; title=&quot;Hessian2&quot;&gt;&lt;/a&gt;Hessian2&lt;/h2&gt;&lt;p&gt;&lt;a
+        
+      
+    
+    </summary>
+    
+      <category term="代码审计" scheme="https://pipimi110.github.io/categories/%E4%BB%A3%E7%A0%81%E5%AE%A1%E8%AE%A1/"/>
+    
+    
+      <category term="java" scheme="https://pipimi110.github.io/tags/java/"/>
+    
+  </entry>
+  
+  <entry>
     <title>cms漏洞3</title>
     <link href="https://pipimi110.github.io/2022/03/24/cms%E6%BC%8F%E6%B4%9E3/"/>
     <id>https://pipimi110.github.io/2022/03/24/cms漏洞3/</id>
     <published>2022-03-24T15:05:26.291Z</published>
-    <updated>2022-03-24T15:05:07.565Z</updated>
+    <updated>2022-03-24T15:11:09.461Z</updated>
     
     <summary type="html">
     
@@ -47,7 +73,7 @@
     <link href="https://pipimi110.github.io/2022/03/21/dubbo%E6%BC%8F%E6%B4%9E/"/>
     <id>https://pipimi110.github.io/2022/03/21/dubbo漏洞/</id>
     <published>2022-03-20T16:15:44.097Z</published>
-    <updated>2022-03-20T16:33:09.524Z</updated>
+    <updated>2022-04-01T10:38:23.309Z</updated>
     
     <summary type="html">
     
