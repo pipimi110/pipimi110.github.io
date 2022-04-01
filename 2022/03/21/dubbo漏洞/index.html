@@ -522,7 +522,6 @@ run:748, Thread (java.lang)
 <ul>
 <li>exp</li>
 </ul>
-<p>只触发一次命令执行</p>
 <pre><code>        out.writeUTF(dubbover);
         out.writeUTF(path);
         out.writeUTF(server_ver);
@@ -530,6 +529,9 @@ run:748, Thread (java.lang)
 //        out.writeObject(&quot;sayHello1&quot;);//注释两行//bypass4 触发点在bypass3前 不受2.7.7限制
 
         HashMap attachments = getJNDI1(uri);
+</code></pre><p>抛出错误，只触发一次命令执行</p>
+<pre><code>        default:
+            throw this.expect(&quot;string&quot;, tag);
 </code></pre><h5 id="sink3-反序列化-后反序列化"><a href="#sink3-反序列化-后反序列化" class="headerlink" title="sink3//反序列化+后反序列化"></a><strong>sink</strong>3//反序列化+后反序列化</h5><p>com.alibaba.com.caucho.hessian.io.MapDeserializer</p>
 <pre><code class="java">    protected void doReadMap(AbstractHessianInput in, Map map, Class&lt;?&gt; keyType, Class&lt;?&gt; valueType) throws IOException &#123;
         Deserializer keyDeserializer = null;
@@ -665,7 +667,7 @@ run:748, Thread (java.lang)
     &#125;
 </code></pre><p>改method即可绕过</p>
 <p><code>sink1//但是attachments</code> 也能绕过</p>
-<p><code>sink2</code>触发点在抛出错误前 所以绕过，并且只执行一次</p>
+<p><code>sink2</code>触发点在抛出错误前 所以绕过</p>
 <h3 id="2-7-9"><a href="#2-7-9" class="headerlink" title="2.7.9"></a>2.7.9</h3><p>2.7.8</p>
 <pre><code>    protected Object decodeEventData(Channel channel, ObjectInput in) throws IOException &#123;
         try &#123;
@@ -1207,7 +1209,7 @@ weblogic.jms.common.
     <div class="ins-search-mask"></div>
     <div class="ins-search-container">
         <div class="ins-input-wrapper">
-            <input type="text" class="ins-search-input" placeholder="Type something..."/>
+            <input type="text" class="ins-search-input" placeholder="请输入关键词..."/>
             <span class="ins-close ins-selectable"><i class="fa fa-times-circle"></i></span>
         </div>
         <div class="ins-section-wrapper">
@@ -1219,10 +1221,10 @@ weblogic.jms.common.
 (function (window) {
     var INSIGHT_CONFIG = {
         TRANSLATION: {
-            POSTS: 'Posts',
-            // PAGES: 'Pages',
-            CATEGORIES: 'Categories',
-            TAGS: 'Tags',
+            POSTS: '文章',
+            // PAGES: '页面',
+            CATEGORIES: '分类',
+            TAGS: '标签',
         },
         ROOT_URL: '/',
         CONTENT_URL: '/content.json',
