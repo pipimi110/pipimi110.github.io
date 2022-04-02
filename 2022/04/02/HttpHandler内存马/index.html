@@ -4,7 +4,7 @@
   <meta charset="utf-8">
   <meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" name="viewport">
   
-  <title itemprop="name">popko&#39;s Blog</title>
+  <title itemprop="name">HttpHandler内存马 | popko&#39;s Blog</title>
   
     <link rel="shortcut icon" href="/images/favicon.ico">
   
@@ -168,6 +168,30 @@
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/tocbot/4.4.2/tocbot.css">
 <div class="pattern-center-blank"></div>
 
+  <div class="pattern-center single-center">
+    <!-- 有配图默认渲染第一张 -->
+    <div class="pattern-attachment-img lazyload" style="background-image: url(https://cdn.jsdelivr.net/gh/pipimi110/CDN@1.1/img/bg/bh3/bh3_01.png);" src="https://cdn.jsdelivr.net/gh/honjun/cdn@1.6/img/loader/orange.progress-bar-stripe-loader.svg" data-src="https://cdn.jsdelivr.net/gh/pipimi110/CDN@1.1/img/bg/bh3/bh3_01.png">
+    </div>
+    <header class="pattern-header single-header">
+      <h1 class="entry-title">
+      HttpHandler内存马</h1>
+      <p class="entry-census">
+        <span>
+          <a href="popko.top">
+            <img src="https://www.popko.top/img/custom/avatar.jpg">
+          </a>
+        </span>
+        <span>
+          <a href="popko.top">popko</a>
+        </span>
+        <span class="bull">
+        ·</span>
+        2022-4-2<span class="bull">
+        ·</span>
+      <span id="busuanzi_value_page_pv"></span>次阅读</p>
+    </header>
+  </div>
+
 <div id="content" class="site-content">
   <div id="primary" class="content-area">
     <main id="main" class="site-main" role="main">
@@ -175,15 +199,8 @@
         <div class="toc"></div>
         <!--<div class="toc-entry-content"><!-- 套嵌目录使用（主要为了支援评论）-->
         
-          <header class="entry-header">
-            <h1 class="entry-title"></h1>
-            <p class="entry-census">&nbsp;·&nbsp;2022-4-2&nbsp;·&nbsp;<span id="busuanzi_value_page_pv"></span>次阅读</p></p>
-
-            <hr>
-          </header>
-        
         <div class="entry-content">
-          <h1 id="HttpHandler内存马"><a href="#HttpHandler内存马" class="headerlink" title="HttpHandler内存马"></a>HttpHandler内存马</h1><h2 id="handlerDemo"><a href="#handlerDemo" class="headerlink" title="handlerDemo"></a>handlerDemo</h2><pre><code class="java">package com.ctf.ezchain;
+          <h2 id="handlerDemo"><a href="#handlerDemo" class="headerlink" title="handlerDemo"></a>handlerDemo</h2><pre><code class="java">package com.ctf.ezchain;
 
 import com.caucho.hessian.io.Hessian2Input;
 import com.sun.net.httpserver.HttpExchange;
@@ -524,16 +541,16 @@ public class ShellHandler extends AbstractTranslet implements HttpHandler &#123;
 
       <section class="author-profile">
         <div class="info" itemprop="author" itemscope="" itemtype="https://schema.org/Person">
-          <a href="" class="profile gravatar"><img src="" itemprop="image" alt="" height="70" width="70"></a>
+          <a href="popko.top" class="profile gravatar"><img src="https://www.popko.top/img/custom/avatar.jpg" itemprop="image" alt="popko" height="70" width="70"></a>
           <div class="meta">
             <span class="title">Author</span>
             <h3 itemprop="name">
-            <a href="" itemprop="url" rel="author"></a>
+            <a href="popko.top" itemprop="url" rel="author">popko</a>
             </h3>
           </div>
         </div>
         <hr>
-        <p><i class="iconfont icon-write"></i></p>
+        <p><i class="iconfont icon-write"></i>otaku</p>
       </section>
     </main><!-- #main -->
   </div><!-- #primary -->
@@ -546,7 +563,7 @@ public class ShellHandler extends AbstractTranslet implements HttpHandler &#123;
     <div class="ins-search-mask"></div>
     <div class="ins-search-container">
         <div class="ins-input-wrapper">
-            <input type="text" class="ins-search-input" placeholder="Type something..."/>
+            <input type="text" class="ins-search-input" placeholder="请输入关键词..."/>
             <span class="ins-close ins-selectable"><i class="fa fa-times-circle"></i></span>
         </div>
         <div class="ins-section-wrapper">
@@ -558,10 +575,10 @@ public class ShellHandler extends AbstractTranslet implements HttpHandler &#123;
 (function (window) {
     var INSIGHT_CONFIG = {
         TRANSLATION: {
-            POSTS: 'Posts',
-            // PAGES: 'Pages',
-            CATEGORIES: 'Categories',
-            TAGS: 'Tags',
+            POSTS: '文章',
+            // PAGES: '页面',
+            CATEGORIES: '分类',
+            TAGS: '标签',
         },
         ROOT_URL: '/',
         CONTENT_URL: '/content.json',
