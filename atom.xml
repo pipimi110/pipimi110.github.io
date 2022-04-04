@@ -6,7 +6,7 @@
   <link href="/atom.xml" rel="self"/>
   
   <link href="https://pipimi110.github.io/"/>
-  <updated>2022-04-02T11:52:34.200Z</updated>
+  <updated>2022-04-04T18:14:23.927Z</updated>
   <id>https://pipimi110.github.io/</id>
   
   <author>
@@ -15,6 +15,32 @@
   </author>
   
   <generator uri="http://hexo.io/">Hexo</generator>
+  
+  <entry>
+    <title>spring-cve</title>
+    <link href="https://pipimi110.github.io/2022/04/05/spring-cve/"/>
+    <id>https://pipimi110.github.io/2022/04/05/spring-cve/</id>
+    <published>2022-04-04T18:14:33.960Z</published>
+    <updated>2022-04-04T18:14:23.927Z</updated>
+    
+    <summary type="html">
+    
+      
+      
+        
+        
+          &lt;h1 id=&quot;spring-cve&quot;&gt;&lt;a href=&quot;#spring-cve&quot; class=&quot;headerlink&quot;
+        
+      
+    
+    </summary>
+    
+      <category term="代码审计" scheme="https://pipimi110.github.io/categories/%E4%BB%A3%E7%A0%81%E5%AE%A1%E8%AE%A1/"/>
+    
+    
+      <category term="java" scheme="https://pipimi110.github.io/tags/java/"/>
+    
+  </entry>
   
   <entry>
     <title>HttpHandler内存马</title>

