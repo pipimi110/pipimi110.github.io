@@ -439,7 +439,7 @@ greeting.getClass().getClassloader()...
             return resolver.resolveArgument(parameter, mavContainer, webRequest, binderFactory);
         &#125;
     &#125;
-</code></pre><h4 id="resolveArgument"><a href="#resolveArgument" class="headerlink" title="resolveArgument"></a>resolveArgument</h4><p>ModelAttributeMethodProcessor</p>
+</code></pre><h4 id="resolveArgument-bean注入"><a href="#resolveArgument-bean注入" class="headerlink" title="resolveArgument//bean注入"></a>resolveArgument//bean注入</h4><p>ModelAttributeMethodProcessor</p>
 <pre><code class="java">    public final Object resolveArgument(MethodParameter parameter, @Nullable ModelAndViewContainer mavContainer, NativeWebRequest webRequest, @Nullable WebDataBinderFactory binderFactory) throws Exception &#123;
         Assert.state(mavContainer != null, &quot;ModelAttributeMethodProcessor requires ModelAndViewContainer&quot;);
         Assert.state(binderFactory != null, &quot;ModelAttributeMethodProcessor requires WebDataBinderFactory&quot;);
@@ -455,18 +455,18 @@ greeting.getClass().getClassloader()...
             attribute = mavContainer.getModel().get(name);
         &#125; else &#123;
             try &#123;
-                attribute = this.createAttribute(name, parameter, binderFactory, webRequest);//createAttribute
+                attribute = this.createAttribute(name, parameter, binderFactory, webRequest);//1.createAttribute//类初始化
             &#125;
         &#125;
         ...
         if (bindingResult == null) &#123;
-            WebDataBinder binder = binderFactory.createBinder(webRequest, attribute, name);//createBinder
+            WebDataBinder binder = binderFactory.createBinder(webRequest, attribute, name);//2.createBinder//设置target
             if (binder.getTarget() != null) &#123;
                 if (!mavContainer.isBindingDisabled(name)) &#123;
-                    this.bindRequestParameters(binder, webRequest);
+                    this.bindRequestParameters(binder, webRequest);//3.bindRequestParameters//参数绑定
                 &#125;
 </code></pre>
-<h5 id="createAttribute-根据"><a href="#createAttribute-根据" class="headerlink" title="createAttribute//根据"></a>createAttribute//根据</h5><p>ServletModelAttributeMethodProcessor</p>
+<h5 id="createAttribute-类初始化"><a href="#createAttribute-类初始化" class="headerlink" title="createAttribute//类初始化"></a>createAttribute//类初始化</h5><p>ServletModelAttributeMethodProcessor</p>
 <pre><code class="java">    protected final Object createAttribute(String attributeName, MethodParameter parameter, WebDataBinderFactory binderFactory, NativeWebRequest request) throws Exception &#123;
         String value = this.getRequestValueForAttribute(attributeName, request);
         if (value != null) &#123;//null
@@ -542,7 +542,7 @@ greeting.getClass().getClassloader()...
 
                 return ctor.newInstance(argsWithDefaultValues);//类初始化为对象
 </code></pre>
-<h5 id="createBinder"><a href="#createBinder" class="headerlink" title="createBinder"></a>createBinder</h5><p>DefaultDataBinderFactory</p>
+<h5 id="createBinder-设置target"><a href="#createBinder-设置target" class="headerlink" title="createBinder//设置target"></a>createBinder//设置target</h5><p>DefaultDataBinderFactory</p>
 <pre><code>    public final WebDataBinder createBinder(NativeWebRequest webRequest, @Nullable Object target, String objectName) throws Exception &#123;
         WebDataBinder dataBinder = this.createBinderInstance(target, objectName, webRequest);
 
@@ -808,8 +808,57 @@ greeting.getClass().getClassloader()...
                 writeMethod.invoke(BeanWrapperImpl.this.getWrappedInstance(), value);
             &#125;
 </code></pre>
+<h4 id="历史补丁-过滤classloader"><a href="#历史补丁-过滤classloader" class="headerlink" title="历史补丁//过滤classloader"></a>历史补丁//过滤classloader</h4><pre><code>curl http://localhost:8877/handling_form_submission_complete_war_exploded/greeting -d &quot;class.classLoader=1&quot;
+</code></pre><pre><code class="java">    private void processLocalProperty(AbstractNestablePropertyAccessor.PropertyTokenHolder tokens, PropertyValue pv) &#123;
+        AbstractNestablePropertyAccessor.PropertyHandler ph = this.getLocalPropertyHandler(tokens.actualName);
+        if (ph != null &amp;&amp; ph.isWritable()) &#123;//ph=null
+            ...
+        &#125; else if (pv.isOptional()) &#123;//false
+            ...
+        &#125; else if (!this.suppressNotWritablePropertyException) &#123;//!false
+            throw this.createNotWritablePropertyException(tokens.canonicalName);//报错
+        &#125;
+
+    protected BeanWrapperImpl.BeanPropertyHandler getLocalPropertyHandler(String propertyName) &#123;
+        PropertyDescriptor pd = this.getCachedIntrospectionResults().getPropertyDescriptor(propertyName);//getPropertyDescriptor返回null//map里没有classLoader属性
+        return pd != null ? new BeanWrapperImpl.BeanPropertyHandler(pd) : null;
+    &#125;
+</code></pre>
+<p><img src="https://raw.githubusercontent.com/pipimi110/blogimg_v1/master/img/image-20220405034521946.png" alt="image-20220405034521946"></p>
+<pre><code class="java">    private CachedIntrospectionResults(Class&lt;?&gt; beanClass) throws BeansException &#123;
+        try &#123;
+            ...
+
+            this.beanInfo = getBeanInfo(beanClass);
+            ...
+
+            this.propertyDescriptors = new LinkedHashMap();
+            Set&lt;String&gt; readMethodNames = new HashSet();
+            PropertyDescriptor[] pds = this.beanInfo.getPropertyDescriptors();
+            PropertyDescriptor[] var4 = pds;
+            int var5 = pds.length;
+
+            for(int var6 = 0; var6 &lt; var5; ++var6) &#123;
+                PropertyDescriptor pd = var4[var6];
+                if (Class.class != beanClass || !&quot;classLoader&quot;.equals(pd.getName()) &amp;&amp; !&quot;protectionDomain&quot;.equals(pd.getName())) &#123;//过滤Class的classLoader和protectionDomain属性
+                    if (logger.isTraceEnabled()) &#123;
+                        logger.trace(&quot;Found bean property &#39;&quot; + pd.getName() + &quot;&#39;&quot; + (pd.getPropertyType() != null ? &quot; of type [&quot; + pd.getPropertyType().getName() + &quot;]&quot; : &quot;&quot;) + (pd.getPropertyEditorClass() != null ? &quot;; editor [&quot; + pd.getPropertyEditorClass().getName() + &quot;]&quot; : &quot;&quot;));
+                    &#125;
+
+                    pd = this.buildGenericTypeAwarePropertyDescriptor(beanClass, pd);
+                    this.propertyDescriptors.put(pd.getName(), pd);
+                    Method readMethod = pd.getReadMethod();
+                    if (readMethod != null) &#123;
+                        readMethodNames.add(readMethod.getName());
+                    &#125;
+                &#125;
+            &#125;
+</code></pre>
+<h4 id="gt-jdk9-module-classloader绕过"><a href="#gt-jdk9-module-classloader绕过" class="headerlink" title="&gt;=jdk9 module.classloader绕过"></a>&gt;=jdk9 module.classloader绕过</h4><p><a target="_blank" rel="noopener" href="https://xz.aliyun.com/t/11143">https://xz.aliyun.com/t/11143</a></p>
+<p>Class.getModule() 不是 Class.class 绕过classLoader判断</p>
 <h3 id="exp-1"><a href="#exp-1" class="headerlink" title="exp"></a>exp</h3><p><a target="_blank" rel="noopener" href="https://github.com/lunasec-io/Spring4Shell-POC">https://github.com/lunasec-io/Spring4Shell-POC</a></p>
-<p>windows tomcat启动war包//用idea启动tomcat的情况，poc失败了，没写上文件（目录问题）</p>
+<pre><code>curl http://localhost:8877/handling_form_submission_complete_war_exploded/greeting -d &quot;class.classloader=1&quot;
+</code></pre><p>windows tomcat启动war包//用idea启动tomcat的情况，poc失败了，没写上文件（目录问题）</p>
 <p><img src="https://raw.githubusercontent.com/pipimi110/blogimg_v1/master/img/image-20220405013736325.png" alt="image-20220405013736325"></p>
 
         </div>
@@ -839,9 +888,26 @@ greeting.getClass().getClassloader()...
       <div class="toc" style="background: none;"></div>
       <section class="post-squares nextprev">
         
+          
+            <div class="post-nepre half previous">
+          
+            <a href="/2022/04/05/waf%E7%BB%95%E8%BF%87/" rel="prev">
+              <div class="background">
+                <img class="lazyload" src="https://cdn.jsdelivr.net/gh/honjun/cdn@1.6/img/loader/orange.progress-bar-stripe-loader.svg" data-src="https://cdn.jsdelivr.net/gh/pipimi110/CDN@1.1/img/bg/bh3/bh3_01.png" style="width: 100%; height: 100%; object-fit: cover; pointer-events: none;" onerror="imgError(this,3)" src="https://cdn.jsdelivr.net/gh/pipimi110/CDN@1.1/img/bg/bh3/bh3_01.png">
+              </div>
+              <span class="label">
+              Previous Post</span>
+              <div class="info">
+                <h3>
+                waf绕过</h3>
+                <hr>
+              </div>
+            </a>
+          </div>
+        
         
           
-            <div class="post-nepre full next">
+            <div class="post-nepre half next">
           
             <a href="/2022/04/02/HttpHandler%E5%86%85%E5%AD%98%E9%A9%AC/" rel="next">
               <div class="background">
@@ -897,7 +963,7 @@ greeting.getClass().getClassloader()...
     <div class="ins-search-mask"></div>
     <div class="ins-search-container">
         <div class="ins-input-wrapper">
-            <input type="text" class="ins-search-input" placeholder="请输入关键词..."/>
+            <input type="text" class="ins-search-input" placeholder="Type something..."/>
             <span class="ins-close ins-selectable"><i class="fa fa-times-circle"></i></span>
         </div>
         <div class="ins-section-wrapper">
@@ -909,10 +975,10 @@ greeting.getClass().getClassloader()...
 (function (window) {
     var INSIGHT_CONFIG = {
         TRANSLATION: {
-            POSTS: '文章',
-            // PAGES: '页面',
-            CATEGORIES: '分类',
-            TAGS: '标签',
+            POSTS: 'Posts',
+            // PAGES: 'Pages',
+            CATEGORIES: 'Categories',
+            TAGS: 'Tags',
         },
         ROOT_URL: '/',
         CONTENT_URL: '/content.json',

