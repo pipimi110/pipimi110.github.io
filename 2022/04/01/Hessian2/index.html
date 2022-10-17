@@ -205,7 +205,7 @@
 <p>反序列化完成后，由于报错语句拼接，触发任意类toString方法</p>
 </blockquote>
 <p>CVE-2020-1948(dubbo漏洞.md)</p>
-<h3 id="反序列化利用-dubbo反序列化实现原理"><a href="#反序列化利用-dubbo反序列化实现原理" class="headerlink" title="反序列化利用//dubbo反序列化实现原理"></a>反序列化利用//dubbo反序列化实现原理</h3><blockquote>
+<h3 id="反序列化利用"><a href="#反序列化利用" class="headerlink" title="反序列化利用"></a>反序列化利用</h3><blockquote>
 <p>能不能直接触发readObject反序列化呢?</p>
 <p>Hessian2ObjectInput重写的readObject只有类初始化和反射，没有原生readObject里的各种调用，也不像fastjson会触发setter,getter</p>
 <p>但是hashmap会触发put方法，可以作为gadget的入口</p>
@@ -264,7 +264,74 @@ public class unser1 &#123;
     &#125;
 &#125;
 </code></pre>
-<h4 id="分析"><a href="#分析" class="headerlink" title="分析"></a>分析</h4><p>org.apache.dubbo.common.serialize.hessian2.Hessian2ObjectInput</p>
+<h4 id="反序列化流程"><a href="#反序列化流程" class="headerlink" title="反序列化流程"></a>反序列化流程</h4><p>遍历出无参构造函数</p>
+<blockquote>
+<p>反序列化时newInstance之前没有setAccess，<strong>反序列化类无参构造函数如果非public会报错</strong></p>
+</blockquote>
+<pre><code>ensureMemberAccess:98, Reflection (sun.reflect)
+slowCheckMemberAccess:296, AccessibleObject (java.lang.reflect)
+checkAccess:288, AccessibleObject (java.lang.reflect)
+newInstance:413, Constructor (java.lang.reflect)//newInstance之前没有setAccess
+readMap:105, MapDeserializer (com.caucho.hessian.io)
+readMap:532, SerializerFactory (com.caucho.hessian.io)
+readObject:2117, Hessian2Input (com.caucho.hessian.io)
+readMap:114, MapDeserializer (com.caucho.hessian.io)
+readMap:538, SerializerFactory (com.caucho.hessian.io)
+readObject:2110, Hessian2Input (com.caucho.hessian.io)
+hessianUnser:37, demo1
+main:66, demo1
+</code></pre><pre><code class="java">                map = (Map)this._ctor.newInstance();
+</code></pre>
+<pre><code class="java">    public MapDeserializer(Class&lt;?&gt; type) &#123;
+        if (type == null) &#123;
+            type = HashMap.class;
+        &#125;
+
+        this._type = type;
+        Constructor&lt;?&gt;[] ctors = type.getConstructors();
+
+        for(int i = 0; i &lt; ctors.length; ++i) &#123;
+            if (ctors[i].getParameterTypes().length == 0) &#123;
+                this._ctor = ctors[i];
+            &#125;//遍历出无参构造函数
+        &#125;
+
+        if (this._ctor == null) &#123;
+            try &#123;
+                this._ctor = HashMap.class.getConstructor();
+            &#125; catch (Exception var4) &#123;
+                throw new IllegalStateException(var4);
+            &#125;
+        &#125;
+
+    &#125;
+</code></pre>
+<p>构造函数初始化后，继续反序列化</p>
+<pre><code>                map = (Map)this._ctor.newInstance();
+            &#125; catch (Exception var4) &#123;
+                throw new IOExceptionWrapper(var4);
+            &#125;
+        &#125;
+
+        in.addRef(map);
+
+        while(!in.isEnd()) &#123;
+            ((Map)map).put(in.readObject(), in.readObject());//继续hessianInput反序列化
+        &#125;
+</code></pre><pre><code>readObject:148, UnsafeDeserializer (com.caucho.hessian.io)
+readObjectInstance:2219, Hessian2Input (com.caucho.hessian.io)
+readObject:2140, Hessian2Input (com.caucho.hessian.io)
+readObject:2124, Hessian2Input (com.caucho.hessian.io)
+readMap:114, MapDeserializer (com.caucho.hessian.io)
+readMap:532, SerializerFactory (com.caucho.hessian.io)
+readObject:2117, Hessian2Input (com.caucho.hessian.io)
+readMap:114, MapDeserializer (com.caucho.hessian.io)//继续hessianInput反序列化
+readMap:538, SerializerFactory (com.caucho.hessian.io)
+readObject:2110, Hessian2Input (com.caucho.hessian.io)
+hessianUnser:39, demo1
+main:68, demo1
+</code></pre><p>原生hession使用了Unsafe可以使用初始化任意类</p>
+<h4 id="入口"><a href="#入口" class="headerlink" title="入口"></a>入口</h4><p>org.apache.dubbo.common.serialize.hessian2.Hessian2ObjectInput</p>
 <pre><code class="java">    public &lt;T&gt; T readObject(Class&lt;T&gt; cls) throws IOException, ClassNotFoundException &#123;
         return this.mH2i.readObject(cls);
     &#125;
@@ -678,7 +745,12 @@ output.completeMessage();
 output.close();
 System.out.println(new
 String(Base64.getEncoder().encode(os.toByteArray())));
-</code></pre>
+</code></pre><h2 id="2022网鼎杯青龙组badbean"><a href="#2022网鼎杯青龙组badbean" class="headerlink" title="2022网鼎杯青龙组badbean"></a>2022网鼎杯青龙组badbean</h2><p><a target="_blank" rel="noopener" href="https://jeva.cc/2855.html">https://jeva.cc/2855.html</a></p>
+<p><a target="_blank" rel="noopener" href="https://y4er.com/posts/wangdingbei-badbean-hessian2/">https://y4er.com/posts/wangdingbei-badbean-hessian2/</a></p>
+<h2 id="2022-0ctf-hessian-onlyjdk"><a href="#2022-0ctf-hessian-onlyjdk" class="headerlink" title="2022 0ctf hessian onlyjdk"></a>2022 0ctf hessian onlyjdk</h2><p>xstream反序列化链</p>
+<p>map.put-&gt;MultiUIDefaults(私有+map实现类 不能反序列化)替换为codeql找到的MimeTypeParameterList(toString()里有hashtable属性.get())-&gt;SwingLazyValue.createValue-&gt;任意类任意静态方法调用(不能是对象调用静态方法，反射利用可嵌套绕过)</p>
+<p>tql，，，</p>
+
         </div>
         <!-- .entry-content -->
         <div class="single-reward">
@@ -1002,5 +1074,9 @@ $(document).ready(function() {
     })
   });
 </script>
+  <div align="center">
+  <a href="https://beian.miit.gov.cn/" target="_blank">闽ICP备2022006945号</a>
+<a href="https://beian.miit.gov.cn/" target="_blank">闽ICP备2022006945号-1</a>
+</div>
 </body>
 </html>
