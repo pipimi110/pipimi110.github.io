@@ -208,7 +208,7 @@
 <h3 id="反序列化利用"><a href="#反序列化利用" class="headerlink" title="反序列化利用"></a>反序列化利用</h3><blockquote>
 <p>能不能直接触发readObject反序列化呢?</p>
 <p>Hessian2ObjectInput重写的readObject只有类初始化和反射，没有原生readObject里的各种调用，也不像fastjson会触发setter,getter</p>
-<p>但是hashmap会触发put方法，可以作为gadget的入口</p>
+<p>但是hashmap/treemap会触发put方法，可以作为gadget的入口</p>
 </blockquote>
 <h4 id="demo"><a href="#demo" class="headerlink" title="demo"></a>demo</h4><pre><code class="java">import org.apache.dubbo.common.serialize.hessian2.Hessian2ObjectOutput;
 import org.apache.dubbo.common.serialize.hessian2.Hessian2ObjectInput;
@@ -521,7 +521,11 @@ exp1(ip,port)
 <h3 id="java"><a href="#java" class="headerlink" title="java"></a>java</h3><p><a target="_blank" rel="noopener" href="https://github.com/lz2y/DubboPOC">https://github.com/lz2y/DubboPOC</a></p>
 <p>参考并进行修改，，，</p>
 <h2 id="dubbo和hession的不同"><a href="#dubbo和hession的不同" class="headerlink" title="dubbo和hession的不同"></a>dubbo和hession的不同</h2><h3 id="类初始化不同"><a href="#类初始化不同" class="headerlink" title="类初始化不同"></a>类初始化不同</h3><p>原生hession使用了Unsafe可以使用初始化任意类</p>
-<p>dubbo通过构造函数初始化，参数默认null，部分构造函数使用到参数可能会报错退出//如SignedObject</p>
+<p>dubbo通过构造函数初始化(有个构造函数选择机制)，参数全部为null，部分构造函数使用到null参数可能会报错退出//如SignedObject</p>
+<pre><code>new SignedObject(null,null,null)//报错
+</code></pre><blockquote>
+<p>com.alibaba.com.caucho.hessian.io.HessianProtocolException: ‘java.security.SignedObject’ could not be instantiated</p>
+</blockquote>
 <p>原生readObject和构造函数无关，可以用来绕过一下黑名单</p>
 <h4 id="dubbo-hession"><a href="#dubbo-hession" class="headerlink" title="dubbo hession"></a>dubbo hession</h4><pre><code class="java">        case 111:
             ref = tag - 96;
@@ -747,8 +751,11 @@ System.out.println(new
 String(Base64.getEncoder().encode(os.toByteArray())));
 </code></pre><h2 id="2022网鼎杯青龙组badbean"><a href="#2022网鼎杯青龙组badbean" class="headerlink" title="2022网鼎杯青龙组badbean"></a>2022网鼎杯青龙组badbean</h2><p><a target="_blank" rel="noopener" href="https://jeva.cc/2855.html">https://jeva.cc/2855.html</a></p>
 <p><a target="_blank" rel="noopener" href="https://y4er.com/posts/wangdingbei-badbean-hessian2/">https://y4er.com/posts/wangdingbei-badbean-hessian2/</a></p>
-<h2 id="2022-0ctf-hessian-onlyjdk"><a href="#2022-0ctf-hessian-onlyjdk" class="headerlink" title="2022 0ctf hessian onlyjdk"></a>2022 0ctf hessian onlyjdk</h2><p>xstream反序列化链</p>
-<p>map.put-&gt;MultiUIDefaults(私有+map实现类 不能反序列化)替换为codeql找到的MimeTypeParameterList(toString()里有hashtable属性.get())-&gt;SwingLazyValue.createValue-&gt;任意类任意静态方法调用(不能是对象调用静态方法，反射利用可嵌套绕过)</p>
+<h2 id="2022-0ctf-hessian-onlyjdk"><a href="#2022-0ctf-hessian-onlyjdk" class="headerlink" title="2022 0ctf hessian onlyjdk"></a>2022 0ctf hessian onlyjdk</h2><p>0ctf.md</p>
+<p>xstream反序列化链</p>
+<pre><code>Hessian2Output output = new Hessian2Output(os);
+output.getSerializerFactory().setAllowNonSerializable(true); // 这样就不用都 要求实现java.io.Serializable
+</code></pre><p>map.put-&gt;MultiUIDefaults不可用(私有+map实现类 hessian反序列化实例化时没有setaccess报错，私有+非map hessian用unsafe实例化)，替换为codeql找到的MimeTypeParameterList(toString()里有hashtable属性.get())-&gt;SwingLazyValue.createValue-&gt;任意类任意静态方法调用(不能是对象调用静态方法，反射利用可嵌套绕过；有setaccess，可以是私有方法)</p>
 <p>tql，，，</p>
 
         </div>
@@ -880,7 +887,7 @@ String(Base64.getEncoder().encode(os.toByteArray())));
   
   <div class="outer">
     <div id="footer-info" class="inner">
-      &copy; 2022 popko<br>
+      &copy; 2023 popko<br>
       powered_by <a href="http://hexo.io/" target="_blank">Hexo</a>
     </div>
   </div>

@@ -6,7 +6,7 @@
   <link href="/atom.xml" rel="self"/>
   
   <link href="https://pipimi110.github.io/"/>
-  <updated>2022-04-05T12:21:22.155Z</updated>
+  <updated>2023-08-08T09:38:07.248Z</updated>
   <id>https://pipimi110.github.io/</id>
   
   <author>
@@ -15,6 +15,28 @@
   </author>
   
   <generator uri="http://hexo.io/">Hexo</generator>
+  
+  <entry>
+    <title></title>
+    <link href="https://pipimi110.github.io/2023/08/08/hession_onlyjdk_2_kryo_onlyjdk/"/>
+    <id>https://pipimi110.github.io/2023/08/08/hession_onlyjdk_2_kryo_onlyjdk/</id>
+    <published>2023-08-08T09:38:34.253Z</published>
+    <updated>2023-08-08T09:38:07.248Z</updated>
+    
+    <summary type="html">
+    
+      
+      
+        
+        
+          &lt;h1 id=&quot;hession-onlyjdk-2-kryo-onlyjdk&quot;&gt;&lt;a href=&quot;#hession-onlyjdk-2-kryo-onlyjdk&quot; class=&quot;headerlink&quot; title=&quot;hession onlyjdk 2 kryo
+        
+      
+    
+    </summary>
+    
+    
+  </entry>
   
   <entry>
     <title>waf绕过</title>
@@ -99,7 +121,7 @@
     <link href="https://pipimi110.github.io/2022/04/01/Hessian2/"/>
     <id>https://pipimi110.github.io/2022/04/01/Hessian2/</id>
     <published>2022-04-01T10:39:39.999Z</published>
-    <updated>2022-09-24T15:51:10.783Z</updated>
+    <updated>2022-11-12T15:16:25.925Z</updated>
     
     <summary type="html">
     

