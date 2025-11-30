@@ -1,6 +1,12 @@
 apollo
 服务端#quick start#linux启动
 
+```
+wsl有网络问题，需要添加各种参数配置wsl ip；开发客户端的idea访问不通localhost(wsl)
+
+java -jar   -Deureka.instance.hostname=172.25.179.206   -Deureka.instance.ip-address=172.25.179.206   -Dspring.cloud.inetutils.preferred-networks=172.25.179.206   -Dapollo.configService.ip=172.25.179.206   -Dserver.address=0.0.0.0   apollo-all-in-one.jar
+```
+
 客户端
 https://www.apolloconfig.com/#/zh/design/apollo-introduction?id=_4%e3%80%81apollo-in-depth
 客户端java
